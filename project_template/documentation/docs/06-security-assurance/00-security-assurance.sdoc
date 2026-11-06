@@ -1,0 +1,676 @@
+[DOCUMENT]
+TITLE: Security Assurance
+OPTIONS:
+  MARKUP: Markdown
+
+[GRAMMAR]
+ELEMENTS:
+- TAG: SECURITY
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: STATUS
+    TYPE: SingleChoice(Draft, InReview, Accepted, Rejected, Active, Mitigated, Closed, Deprecated)
+    REQUIRED: True
+  - TITLE: TITLE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: TYPE
+    TYPE: SingleChoice(Context, Asset, Threat, SecurityControl, VulnerabilityManagement, IncidentResponse, ComplianceObligation, AssuranceClaim)
+    REQUIRED: True
+  - TITLE: DESCRIPTION
+    TYPE: String
+    REQUIRED: True
+  - TITLE: LIFECYCLE_PHASES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: OPERATING_MODES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ASSETS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TRUST_BOUNDARY
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ATTACK_SURFACE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: THREAT_ACTORS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ATTACK_PATH
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONSEQUENCES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RISK_METHOD
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INITIAL_RISK
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONTROL_TYPE
+    TYPE: SingleChoice(Preventive, Detective, Responsive, Recovery)
+    REQUIRED: False
+  - TITLE: SECURITY_OBJECTIVES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: SAFETY_IMPACT
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RESIDUAL_RISK
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ACCEPTANCE_RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: VERIFICATION_METHOD
+    TYPE: String
+    REQUIRED: False
+  - TITLE: STANDARD
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EDITION
+    TYPE: String
+    REQUIRED: False
+  - TITLE: JURISDICTION
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CLAUSES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: APPLICABILITY
+    TYPE: SingleChoice(Candidate, Applicable, PartiallyApplicable, NotApplicable, Superseded)
+    REQUIRED: False
+  - TITLE: APPLICABILITY_RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EVIDENCE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: OWNER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: REVIEWER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: REVIEW_DATE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TAGS
+    TYPE: Tag
+    REQUIRED: False
+  RELATIONS:
+  - TYPE: Parent
+    ROLE: Derived from
+  - TYPE: Child
+    ROLE: Supported by
+  - TYPE: File
+    ROLE: Evidenced by
+
+[TEXT]
+STATEMENT: >>>
+# Security assurance purpose
+
+Security assurance establishes confidence that the product protects its
+important assets against deliberate, accidental, and environmental threats
+throughout its lifecycle.
+
+Security records define:
+
+- security context and protected assets
+- trust boundaries and attack surfaces
+- threat actors and attack paths
+- security risks and controls
+- security effects on safety
+- vulnerability management
+- incident response
+- applicable security obligations
+- assurance claims and evidence.
+
+Use immutable UIDs with this form:
+
+```text
+SEC-[AREA]-[TYPE]-[NNN]
+```
+
+Supported type segments are:
+
+- `CTX` for security context
+- `ASSET` for protected assets
+- `THREAT` for threat scenarios
+- `CTRL` for security controls
+- `VULN` for vulnerability-management obligations
+- `INC` for incident-response obligations
+- `COMP` for compliance obligations
+- `CLAIM` for assurance claims.
+
+Security records supplement rather than replace safety records. When a threat
+can create a hazard, inhibit a risk control, interfere with a safety function,
+alter a protected configuration, or invalidate safety evidence, the security
+record must trace to the affected safety and design records.
+
+Isolation is a security control only when its boundary, enforcement mechanism,
+assumptions, shared resources, permitted interactions, failure behavior, and
+verification evidence are documented.
+
+# Security risk management
+
+Before assigning security risk, approve a method defining:
+
+- asset value and security objectives
+- threat likelihood and attacker capability
+- technical and operational exposure
+- consequence severity
+- safety impact
+- uncertainty treatment
+- risk acceptance criteria
+- escalation and approval authority.
+
+Security analysis should consider adaptive and deliberate behavior in addition
+to random failures and foreseeable misuse.
+
+The preferred control hierarchy is:
+
+1. remove unnecessary exposure and privilege
+2. establish narrow trust boundaries and least privilege
+3. prevent unauthorized access or modification
+4. detect attacks, misuse, and control degradation
+5. contain effects and maintain required safety behavior
+6. recover to an approved configuration
+7. monitor vulnerabilities and field incidents.
+<<<
+
+[SECURITY]
+UID: SEC-TEMPLATE-CTX-001
+STATUS: Draft
+TITLE: Template product security context
+TYPE: Context
+DESCRIPTION: Define the product security boundary, deployment environment, trust assumptions, external dependencies, administrative paths, update mechanisms, and protected assets included in the security-assurance scope.
+LIFECYCLE_PHASES: Development, build, provisioning, transport, installation, commissioning, operation, maintenance, update, recovery, decommissioning, and disposal
+OPERATING_MODES: Manual, remote, autonomous, degraded, service, charging, recovery, provisioning, and update
+ASSETS: >>>
+- safety-related commands and status
+- software and firmware
+- boot and update trust anchors
+- protected configuration and calibration
+- credentials and cryptographic keys
+- operational and personal data
+- logs and security evidence
+- availability of safety and operational services.
+<<<
+TRUST_BOUNDARY: >>>
+Product boundary:
+Safety boundary:
+Administrative boundary:
+Update and provisioning boundary:
+External services:
+Supplier-controlled components:
+Trusted components:
+Untrusted components:
+Shared resources:
+Physical-access assumptions:
+Network-access assumptions:
+Conditions invalidating this context:
+<<<
+ATTACK_SURFACE: >>>
+- external network and radio interfaces
+- local maintenance and diagnostic interfaces
+- removable media
+- software and firmware update paths
+- provisioning and recovery mechanisms
+- credentials, keys, and service accounts
+- third-party components and supplier artifacts
+- cloud, mobile, and operator applications
+- logs, telemetry, and data exports
+- physical ports and debug interfaces.
+<<<
+CONSEQUENCES: An incomplete security context can invalidate threat analysis, security controls, safety assumptions, verification evidence, compliance conclusions, and release authorization.
+RISK_METHOD: Replace with the approved security risk method and revision
+SAFETY_IMPACT: Security context assumptions must remain consistent with the system context, safety boundary, hazardous scenarios, and safety-function dependencies.
+ACCEPTANCE_RATIONALE: >>>
+Product variants:
+Intended deployment:
+Expected users and administrators:
+External actors and systems:
+Network and radio exposure:
+Physical access:
+Trust anchors:
+Update authorities:
+Configuration authorities:
+Supplier dependencies:
+Data classification:
+Logging and monitoring:
+Retention obligations:
+Conditions requiring reassessment:
+Approval authority:
+<<<
+OWNER: Template security owner
+REVIEWER: Replace with a competent security reviewer
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, security, context, trust-boundary
+
+[SECURITY]
+UID: SEC-TEMPLATE-ASSET-001
+STATUS: Draft
+TITLE: Template safety-related configuration and command asset
+TYPE: Asset
+DESCRIPTION: Protect the authenticity, integrity, authorization, availability, and approved version of safety-related commands, parameters, calibration, and configuration.
+LIFECYCLE_PHASES: Provisioning, commissioning, operation, maintenance, update, and recovery
+OPERATING_MODES: All modes in which safety-related commands or configuration can be read, transmitted, modified, selected, or applied
+ASSETS: Safety commands, safety parameters, calibration, configuration baselines, authorization policy, audit records, and recovery data
+TRUST_BOUNDARY: The asset crosses the administrative, update, communications, and safety boundaries.
+ATTACK_SURFACE: Operational communication, maintenance interfaces, update mechanisms, configuration storage, recovery mechanisms, and privileged tooling
+CONSEQUENCES: Compromise can disable a safety response, create hazardous behavior, invalidate a safety assumption, conceal an unsafe state, or prevent recovery.
+SECURITY_OBJECTIVES: >>>
+Confidentiality: Protect secrets and sensitive operational information where disclosure creates risk
+Integrity: Detect and reject unauthorized or corrupted changes
+Availability: Preserve required safety behavior during loss or attack
+Authenticity: Establish the source of commands, updates, and configuration
+Authorization: Permit changes only by approved identities in approved states
+Freshness: Reject stale, duplicated, replayed, or reordered commands
+Accountability: Retain sufficient evidence for review and incident investigation
+Recovery: Restore an approved and identifiable baseline
+<<<
+SAFETY_IMPACT: Compromise can affect REQ-TEMPLATE-SAFE-001 and SAFE-TEMPLATE-FUNC-001.
+ACCEPTANCE_RATIONALE: The asset remains protected across storage, communication, execution, update, reset, recovery, and decommissioning.
+OWNER: Template asset owner
+REVIEWER: Replace with a competent security and safety reviewer
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, security, asset, safety-related
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-CTX-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Derived from
+
+[SECURITY]
+UID: SEC-TEMPLATE-THREAT-001
+STATUS: Draft
+TITLE: Template hostile input across the safety boundary
+TYPE: Threat
+DESCRIPTION: An attacker or compromised lower-assurance component sends malformed, stale, replayed, reordered, unauthorized, or excessive-rate input across the safety boundary to alter behavior or prevent a required safety response.
+LIFECYCLE_PHASES: Commissioning, operation, maintenance, update, and recovery
+OPERATING_MODES: Remote, autonomous, degraded, service, recovery, and update
+ASSETS: SEC-TEMPLATE-ASSET-001
+TRUST_BOUNDARY: The threat crosses DES-TEMPLATE-IF-001 from the lower-assurance communications domain into the safety controller.
+ATTACK_SURFACE: Network protocol, message parser, command interface, status interface, diagnostic interface, resource queues, and recovery path
+THREAT_ACTORS: >>>
+- remote unauthenticated attacker
+- authenticated but unauthorized user
+- compromised operator or maintenance account
+- compromised communications component
+- malicious or compromised supplier component
+- person with local physical or diagnostic access.
+<<<
+ATTACK_PATH: >>>
+1. Obtain access to an exposed communications or maintenance path.
+2. Construct input that violates identity, authorization, schema, range,
+   freshness, sequence, state, or rate expectations.
+3. Send the input across the safety boundary.
+4. Attempt to influence safety logic, exhaust resources, suppress diagnostics,
+   alter protected state, or delay the safe response.
+<<<
+CONSEQUENCES: The attack may delay or inhibit a protective stop, alter protected configuration, trigger hazardous motion, cause denial of service, conceal a fault, or invalidate retained evidence.
+RISK_METHOD: Replace with the approved security risk method and revision
+INITIAL_RISK: Replace with likelihood, attacker capability, exposure, consequence, safety impact, uncertainty, and resulting initial risk
+SAFETY_IMPACT: The threat can contribute to SAFE-TEMPLATE-HAZ-001 by interfering with SAFE-TEMPLATE-FUNC-001.
+RESIDUAL_RISK: Not yet evaluated
+ACCEPTANCE_RATIONALE: Further risk reduction is required through least privilege, authentication, authorization, input validation, replay protection, rate limiting, resource partitioning, monitoring, safe fallback, and independent safety behavior.
+VERIFICATION_METHOD: Interface robustness testing, abuse-case testing, fuzzing, resource-exhaustion testing, fault injection, penetration testing, and safety-response verification
+OWNER: Template threat owner
+REVIEWER: Replace with competent security and safety reviewers
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, security, threat, safety-boundary
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-CTX-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-ASSET-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-HAZ-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-IF-001
+  ROLE: Derived from
+
+[SECURITY]
+UID: SEC-TEMPLATE-CTRL-001
+STATUS: Draft
+TITLE: Template defensive safety-boundary control
+TYPE: SecurityControl
+DESCRIPTION: Treat all lower-assurance input as untrusted and enforce authentication, authorization, validation, freshness, sequencing, rate limits, resource limits, deterministic arbitration, diagnostics, and safe fallback at the safety boundary.
+LIFECYCLE_PHASES: Commissioning, operation, maintenance, update, recovery, and decommissioning
+OPERATING_MODES: All modes permitting communication across the safety boundary
+ASSETS: SEC-TEMPLATE-ASSET-001
+TRUST_BOUNDARY: DES-TEMPLATE-IF-001
+ATTACK_SURFACE: Operational messages, privileged commands, diagnostics, update coordination, reset requests, recovery requests, and status responses
+CONSEQUENCES: Failure of the control can transfer unauthorized authority into the safety boundary or allow lower-assurance behavior to interfere with a required safety response.
+CONTROL_TYPE: Preventive
+SECURITY_OBJECTIVES: >>>
+- authenticate privileged sources
+- authorize commands according to identity, state, and role
+- validate schema, type, range, length, state, and integrity
+- reject stale, replayed, duplicated, reordered, and excessive-rate traffic
+- constrain CPU, memory, storage, queue, network, and logging consumption
+- prioritize safety behavior over operational requests
+- preserve safe fallback during communication failure or attack
+- retain security-relevant rejection and diagnostic evidence
+- prevent external input from clearing a latched safety condition.
+<<<
+SAFETY_IMPACT: The control protects REQ-TEMPLATE-SAFE-001, SAFE-TEMPLATE-FUNC-001, and the assumptions of DES-TEMPLATE-ARCH-001.
+RESIDUAL_RISK: Replace after implementation, security verification, safety verification, and representative validation
+ACCEPTANCE_RATIONALE: The control is accepted only when hostile and malformed input cannot prevent the required safe response within its allocated timing and resource limits.
+VERIFICATION_METHOD: Code review, static analysis, protocol conformance, fuzzing, abuse-case testing, penetration testing, resource testing, fault injection, timing measurement, and regression testing
+EVIDENCE: Replace with controlled design, implementation, security-test, fault-injection, timing, and review evidence
+OWNER: Template security-control owner
+REVIEWER: Replace with an independent security reviewer and required safety reviewer
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, security, control, safety-boundary
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-THREAT-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-IF-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Derived from
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-TEST-002
+  ROLE: Supported by
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-VER-002
+  ROLE: Supported by
+
+[SECURITY]
+UID: SEC-TEMPLATE-VULN-001
+STATUS: Draft
+TITLE: Template vulnerability-management process
+TYPE: VulnerabilityManagement
+DESCRIPTION: Establish a controlled process to receive, assess, prioritize, remediate, verify, disclose, and monitor vulnerabilities affecting released and supported product configurations.
+LIFECYCLE_PHASES: Development, production, operation, maintenance, update, end of support, and decommissioning
+ASSETS: Product software, firmware, hardware, dependencies, build systems, deployment infrastructure, credentials, safety assumptions, and retained evidence
+TRUST_BOUNDARY: Product, supplier, development, build, update, support, and field-service boundaries
+ATTACK_SURFACE: Public reports, supplier advisories, dependency inventories, scanners, testing, incident reports, and field telemetry
+THREAT_ACTORS: Researchers, customers, suppliers, opportunistic attackers, targeted attackers, insiders, and automated scanning systems
+CONSEQUENCES: Unmanaged vulnerabilities can remain exploitable, invalidate security or safety assumptions, prevent timely remediation, and expose unsupported products to unacceptable risk.
+CONTROL_TYPE: Responsive
+SECURITY_OBJECTIVES: >>>
+- maintain an accurate component and dependency inventory
+- provide a documented vulnerability-reporting channel
+- assess exploitability, exposure, consequence, and safety impact
+- assign ownership and response timelines
+- develop and review mitigations or updates
+- verify remediation and required regression
+- notify affected stakeholders
+- preserve decisions, evidence, and residual-risk acceptance
+- define support periods and end-of-support behavior.
+<<<
+SAFETY_IMPACT: Every vulnerability assessment must determine whether the issue can create a hazard, inhibit a risk control, affect a safety function, or invalidate safety evidence.
+RESIDUAL_RISK: Replace with the accepted risk for unresolved or deferred vulnerabilities
+ACCEPTANCE_RATIONALE: Vulnerabilities are accepted only by authorized roles using the approved risk method and with documented compensating controls, affected configurations, expiry conditions, and monitoring.
+VERIFICATION_METHOD: Process audit, dependency and component review, remediation testing, regression testing, update validation, and closure review
+EVIDENCE: Replace with vulnerability records, assessments, remediation commits, test reports, advisories, decisions, and closure evidence
+OWNER: Template product security response owner
+REVIEWER: Replace with competent security, product, and safety reviewers as applicable
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, security, vulnerability-management, field-monitoring
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-CTX-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-ASSET-001
+  ROLE: Derived from
+
+[SECURITY]
+UID: SEC-TEMPLATE-INC-001
+STATUS: Draft
+TITLE: Template security incident response
+TYPE: IncidentResponse
+DESCRIPTION: Establish a controlled process to detect, triage, contain, investigate, recover from, communicate, and learn from security incidents affecting product or safety behavior.
+LIFECYCLE_PHASES: Production, deployment, operation, maintenance, update, recovery, end of support, and decommissioning
+OPERATING_MODES: All operational, service, recovery, and update modes
+ASSETS: Product availability, safety behavior, credentials, protected data, configuration, logs, evidence, customer trust, and regulatory obligations
+TRUST_BOUNDARY: Product, operational, support, supplier, cloud, update, and safety boundaries
+ATTACK_SURFACE: Monitoring alerts, field reports, anomalous behavior, authentication events, update failures, safety events, and vulnerability disclosures
+THREAT_ACTORS: External attackers, insiders, compromised suppliers, compromised customers, malicious applications, and unknown actors
+CONSEQUENCES: An ineffective response can prolong unsafe or insecure exposure, destroy evidence, spread compromise, cause incorrect recovery, or leave fielded products in an unknown configuration.
+CONTROL_TYPE: Recovery
+SECURITY_OBJECTIVES: >>>
+- define incident severity and escalation criteria
+- preserve logs and forensic evidence
+- identify affected products and immutable baselines
+- assess immediate and potential safety impact
+- contain compromise without defeating required safety behavior
+- revoke or rotate compromised credentials
+- restore an approved configuration
+- verify recovery and required regression
+- communicate with customers, suppliers, authorities, and assessors
+- feed lessons into threats, controls, requirements, tests, and field monitoring.
+<<<
+SAFETY_IMPACT: Incidents with potential safety impact require immediate coordination with the safety authority and reassessment of affected hazards, controls, functions, evidence, and release decisions.
+RESIDUAL_RISK: Replace with the accepted post-incident risk and follow-up actions
+ACCEPTANCE_RATIONALE: Incident closure requires identified affected configurations, contained exposure, approved recovery, verified corrective actions, preserved evidence, and authorized residual-risk acceptance.
+VERIFICATION_METHOD: Tabletop exercises, recovery drills, communication exercises, evidence-retention checks, credential-rotation tests, and post-incident review
+EVIDENCE: Replace with exercise reports, incident records, timelines, forensic evidence, recovery verification, communications, and corrective-action closure
+OWNER: Template incident-response owner
+REVIEWER: Replace with competent security, operations, legal, compliance, and safety reviewers as applicable
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, security, incident-response, recovery
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-CTX-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-VULN-001
+  ROLE: Derived from
+
+[SECURITY]
+UID: SEC-TEMPLATE-COMP-001
+STATUS: Draft
+TITLE: Template product security compliance assessment
+TYPE: ComplianceObligation
+DESCRIPTION: Determine the product-specific cybersecurity, secure-development, vulnerability-disclosure, update, data-protection, radio, infrastructure, customer, and market-access obligations applicable to each released configuration.
+LIFECYCLE_PHASES: Development, production, deployment, operation, maintenance, update, end of support, and decommissioning
+ASSETS: Product security evidence, supported configurations, software and component inventory, vulnerability records, update mechanisms, user information, and declarations
+TRUST_BOUNDARY: Product, development, supplier, operational, customer, regulatory, and market boundaries
+CONSEQUENCES: Missing or incorrect applicability decisions can lead to inadequate controls, unsupported claims, market restrictions, delayed incident response, or invalid release authorization.
+SAFETY_IMPACT: Security obligations affecting safety functions, updates, communications, configuration, or field response must be included in the safety impact assessment.
+ACCEPTANCE_RATIONALE: Every released and supported configuration is matched to confirmed obligations, exact editions, clause-level evidence, support periods, update commitments, disclosure processes, and authorized conclusions.
+STANDARD: Candidate references include IEC 62443, ISO/SAE 21434, ETSI EN 303 645, ISO/IEC 27001, NIST Cybersecurity Framework, applicable product cybersecurity regulations, and customer-specific security requirements
+EDITION: Confirm each applicable regulation, standard, amendment, corrigendum, and transition date independently
+JURISDICTION: Replace with target countries, regions, markets, customers, sectors, and contractual schemes
+CLAUSES: Replace with clause-level applicability results
+APPLICABILITY: Candidate
+APPLICABILITY_RATIONALE: >>>
+Product classification:
+Intended markets and sectors:
+Connectivity and radio technologies:
+Data and privacy scope:
+Safety-related security scope:
+Applicable regulations:
+Applicable standards:
+Customer and contractual requirements:
+National and regional deviations:
+Certification or conformity route:
+Required external assessors or laboratories:
+Support and update obligations:
+Vulnerability-disclosure obligations:
+Incident-reporting obligations:
+Labeling and user-information obligations:
+Decision authority:
+<<<
+EVIDENCE: Replace with applicability analyses, compliance matrices, assessments, reports, certificates, declarations, technical files, and retained decisions
+OWNER: Template security compliance owner
+REVIEWER: Replace with qualified legal, compliance, certification, security, privacy, radio, and safety reviewers as applicable
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, security, compliance
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-CTX-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-VULN-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-INC-001
+  ROLE: Derived from
+
+[SECURITY]
+UID: SEC-TEMPLATE-CLAIM-001
+STATUS: Draft
+TITLE: Template top-level release security claim
+TYPE: AssuranceClaim
+DESCRIPTION: The identified product and release baseline provides an acceptable level of security for its approved deployment and operating context, subject to documented assumptions, limitations, residual risks, support commitments, and required external controls.
+LIFECYCLE_PHASES: All lifecycle phases included in the approved release and support scope
+OPERATING_MODES: All operating modes included in the approved release scope
+ASSETS: All security-relevant assets included in the release context
+TRUST_BOUNDARY: All product, safety, administrative, update, supplier, cloud, and operational boundaries included in the release context
+ATTACK_SURFACE: All interfaces, services, physical paths, update mechanisms, maintenance paths, dependencies, and external systems included in the approved threat model
+CONSEQUENCES: An unsupported claim can conceal unacceptable exposure, invalidate safety assumptions, misrepresent compliance, and authorize release without adequate evidence.
+SECURITY_OBJECTIVES: Confidentiality, integrity, availability, authenticity, authorization, freshness, accountability, containment, monitoring, and recoverability as allocated by the approved context and risk assessment
+SAFETY_IMPACT: The claim includes security controls and assumptions relied upon by the safety case.
+RESIDUAL_RISK: Replace with a summary of accepted residual security risks and durable references to the decisions
+ACCEPTANCE_RATIONALE: >>>
+Release baseline:
+Product variants:
+Deployment context:
+Protected assets:
+Trust boundaries:
+Threat scenarios:
+Security controls:
+Security verification:
+Penetration and robustness testing:
+Safety-related security conclusions:
+Unresolved vulnerabilities:
+Approved deviations:
+Residual risks:
+Required external controls:
+Credential and key-management status:
+Update and recovery readiness:
+Vulnerability-management readiness:
+Incident-response readiness:
+Compliance conclusions:
+Independent assessment:
+Configuration audit:
+Support period:
+Field-monitoring arrangements:
+Approval authority:
+Approval decision and date:
+<<<
+VERIFICATION_METHOD: Review of the controlled security case, traceability, verification evidence, unresolved vulnerabilities, safety impact, configuration audit, compliance conclusions, and release approval
+EVIDENCE: Replace with the controlled security case, threat model, risk assessment, verification reports, penetration-test reports, vulnerability status, compliance evidence, configuration index, and release decision
+OWNER: Template product security authority
+REVIEWER: Replace with an independent security reviewer or assessor and the safety authority where required
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, security, assurance-claim, release
+RELATIONS:
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-THREAT-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-CTRL-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-VULN-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-INC-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SEC-TEMPLATE-COMP-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CLAIM-001
+  ROLE: Derived from
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-VER-002
+  ROLE: Supported by
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-VER-003
+  ROLE: Supported by
+- TYPE: Child
+  VALUE: MILESTONE-TEMPLATE-SYSTEM-001
+  ROLE: Supported by
+
+[TEXT]
+STATEMENT: >>>
+# Security verification
+
+Security verification should use methods appropriate to the threat and control,
+including:
+
+- design and code review
+- static and dynamic analysis
+- dependency and component analysis
+- protocol and interface conformance testing
+- negative and abuse-case testing
+- fuzzing
+- authentication and authorization testing
+- replay and freshness testing
+- rate and resource-exhaustion testing
+- penetration testing
+- update, rollback, and recovery testing
+- credential and key-management testing
+- monitoring and diagnostic testing
+- incident-response exercises
+- security-to-safety fault injection.
+
+Security evidence must identify the tested product baseline, environment, tools,
+test data, credentials, configuration, assumptions, expected results, actual
+results, anomalies, reviewer, and required independence.
+
+A passing nominal test does not establish resistance to hostile input.
+
+# Security and safety coordination
+
+Security and safety activities must be coordinated when:
+
+- a threat can create or worsen a hazardous condition
+- a control is relied upon by a safety function
+- a security mechanism can delay or inhibit a safety response
+- a security update changes safety-related software or configuration
+- a vulnerability invalidates a safety assumption
+- incident containment changes operational or degraded behavior
+- credential loss affects maintenance, reset, recovery, or update authority
+- shared resources permit interference with safety-critical behavior.
+
+Safety must not assume that isolation is effective without evidence. Security
+must not introduce confidentiality, authentication, availability, or recovery
+behavior that conflicts with the required safe state.
+
+# Release review
+
+Before accepting a security assurance claim, confirm that:
+
+- the security context and protected assets are approved
+- trust boundaries and attack surfaces are documented
+- threat scenarios cover relevant lifecycle phases and operating modes
+- security risks have initial and residual evaluations
+- controls have objective security requirements and verification
+- security effects on safety are traced and reviewed
+- privileged access follows least privilege
+- credentials, keys, updates, configuration, and recovery are controlled
+- required vulnerability-management and incident-response capabilities exist
+- unresolved vulnerabilities have authorized dispositions
+- compliance obligations identify exact applicability and evidence
+- verification matches the release baseline
+- assumptions and required external controls are documented
+- the approval is limited to the identified release configuration.
+<<<

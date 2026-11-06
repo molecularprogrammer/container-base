@@ -1,0 +1,8 @@
+test_project
+.cline/.env
+.cline/.env.*
+!.cline/.env.example
+.cline/data
+.cline/worktrees
+**/.cline/data/
+__pycache__

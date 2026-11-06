@@ -1,0 +1,398 @@
+[DOCUMENT]
+TITLE: Delivery and Assurance Milestones
+OPTIONS:
+  MARKUP: Markdown
+
+[GRAMMAR]
+ELEMENTS:
+- TAG: MILESTONE
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: STATUS
+    TYPE: SingleChoice(Planned, Active, AtRisk, InReview, Complete, Cancelled)
+    REQUIRED: True
+  - TITLE: TITLE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: SAFETY_RELEVANCE
+    TYPE: SingleChoice(NotSafetyRelated, SafetyRelated, SafetyCritical)
+    REQUIRED: True
+  - TITLE: GATE_TYPE
+    TYPE: SingleChoice(Delivery, RequirementsReview, DesignReview, ComponentVerification, IntegrationReadiness, SystemVerification, ValidationReview, ComplianceReview, ReleaseAuthorization)
+    REQUIRED: True
+  - TITLE: PROJECT
+    TYPE: String
+    REQUIRED: True
+  - TITLE: COMPONENT
+    TYPE: String
+    REQUIRED: True
+  - TITLE: SCOPE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: BASELINE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: NEXT_ACTIVITY
+    TYPE: String
+    REQUIRED: True
+  - TITLE: DESCRIPTION
+    TYPE: String
+    REQUIRED: True
+  - TITLE: TARGET_DATE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EXIT_CRITERIA
+    TYPE: String
+    REQUIRED: True
+  - TITLE: REQUIRED_EVIDENCE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: DEPENDENCIES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: LIMITATIONS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TAILORING_RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INDEPENDENCE
+    TYPE: SingleChoice(None, Peer, IndependentPerson, IndependentOrganization, ExternalAssessor)
+    REQUIRED: True
+  - TITLE: APPROVAL_AUTHORITY
+    TYPE: String
+    REQUIRED: True
+  - TITLE: APPROVAL
+    TYPE: String
+    REQUIRED: False
+  - TITLE: SYNC_ADAPTER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EXTERNAL_ENTITY_ID
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EXTERNAL_RELATED_ENTITIES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: PLANNING_CONTAINER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TAGS
+    TYPE: Tag
+    REQUIRED: False
+  RELATIONS:
+  - TYPE: Parent
+    ROLE: Includes
+  - TYPE: Child
+    ROLE: Depends on
+  - TYPE: File
+    ROLE: Delivered by
+
+[TEXT]
+STATEMENT: >>>
+# Milestone policy
+
+A milestone records a readiness or approval decision for an identified
+component, subsystem, interface, integrated system, compliance package, or
+release baseline.
+
+It does not select a project-wide development profile.
+
+Use immutable UIDs with this form:
+
+```text
+MILESTONE-[AREA]-[NNN]
+```
+
+Approval applies only to the recorded baseline. When a later baseline replaces
+it, create a new milestone or separately auditable superseding approval.
+
+Every milestone must identify:
+
+- project and technical scope
+- included and excluded variants
+- safety relevance
+- exact configuration baseline
+- interface revisions and compatibility constraints
+- requirements, design, implementation, and evidence in scope
+- objective exit criteria
+- anomalies and limitations
+- next activity authorized by approval
+- required independence and approval authority.
+
+A component milestone normally means that the component may enter the specified
+integration activity. It does not establish that the complete system is
+verified, validated, acceptably safe, compliant, or ready for release.
+<<<
+
+[MILESTONE]
+UID: MILESTONE-TEMPLATE-COMMS-001
+STATUS: Planned
+TITLE: Template communications component ready for integration
+SAFETY_RELEVANCE: NotSafetyRelated
+GATE_TYPE: IntegrationReadiness
+PROJECT: Template mixed-criticality product
+COMPONENT: Template communications component
+SCOPE: Functional communication behavior, storage behavior, controlled safety-boundary interface, update behavior, and identified product variants.
+BASELINE: Replace with immutable software commit, build identifier, image digest, configuration version, and interface revision.
+NEXT_ACTIVITY: Controlled integration with the identified receiving-system baseline.
+DESCRIPTION: Confirm that the non-safety-related component satisfies its allocated requirements and is ready for controlled integration.
+TARGET_DATE: 2026-12-15
+EXIT_CRITERIA: >>>
+- allocated functional, edge-case, and error requirements are verified
+- design and code reviews are complete
+- interface contracts are approved and versioned
+- component tests pass for the identified baseline
+- startup, shutdown, update, rollback, storage failure, and recovery are tested
+- resource limits are established
+- anomalies and limitations have dispositions
+- required receiving-system tests are defined.
+<<<
+REQUIRED_EVIDENCE: >>>
+- requirement and design reviews
+- interface specification
+- component verification report
+- build provenance and configuration record
+- software bill of materials
+- anomaly and limitation report
+- integration-test recommendations.
+<<<
+DEPENDENCIES: >>>
+Receiving activity: Safety-related system integration
+Required receiving baseline:
+Interface specification and revision:
+CPU, memory, storage, network, and timing assumptions:
+Update and rollback assumptions:
+Cybersecurity assumptions:
+Required integration tests:
+Change-notification authority:
+<<<
+LIMITATIONS: >>>
+Known anomalies:
+Unsupported configurations:
+Operational restrictions:
+Safety assumptions imposed by the receiving system:
+Changes requiring renewed integration approval:
+<<<
+TAILORING_RATIONALE: Lightweight implementation evidence is permitted because the component does not implement a safety function. Receiving-system integration must verify containment and every relied-upon safety assumption.
+INDEPENDENCE: Peer
+APPROVAL_AUTHORITY: Communications component owner
+APPROVAL: Replace with approver, decision, date, baseline, conditions, and retained approval reference.
+TAGS: template, milestone, component, integration-readiness
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-FR-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-CMP-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-IF-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: IMP-TEMPLATE-VER-001
+  ROLE: Includes
+
+[MILESTONE]
+UID: MILESTONE-TEMPLATE-SAFETY-001
+STATUS: Planned
+TITLE: Template safety controller ready for integration
+SAFETY_RELEVANCE: SafetyCritical
+GATE_TYPE: IntegrationReadiness
+PROJECT: Template mixed-criticality product
+COMPONENT: Template safety controller
+SCOPE: Protective-stop logic, diagnostics, safe-state outputs, timing, reset handling, restart inhibition, safety parameters, and safety communications.
+BASELINE: Replace with hardware revision, firmware commit, build identifier, bootloader, safety parameters, calibration, and interface revision.
+NEXT_ACTIVITY: Controlled integration with sensing, actuation, power, communications, and system-supervision components.
+DESCRIPTION: Confirm that the safety controller satisfies its allocated safety requirements and is ready for controlled integration.
+TARGET_DATE: Replace with an ISO 8601 date
+EXIT_CRITERIA: >>>
+- safety requirements and functions are approved and verified
+- integrity and response-time targets are justified
+- hardware and software reviews are complete
+- safety analyses match the baseline
+- diagnostics, fault reactions, reset, restart, and degraded behavior are verified
+- required faults and fault combinations have been evaluated
+- interface contracts and external assumptions are approved
+- anomalies and deviations have authorized dispositions
+- independent reviews are complete
+- integration and regression tests are defined.
+<<<
+REQUIRED_EVIDENCE: >>>
+- approved requirement and design baselines
+- safety-function allocation
+- architecture and interface specifications
+- review records
+- static-analysis, unit, component, and fault-injection reports
+- integrity calculations
+- component configuration index
+- anomaly and deviation dispositions
+- independent verification decision.
+<<<
+DEPENDENCIES: >>>
+Receiving activity: Safety-related system integration
+Required receiving baseline:
+Power and grounding assumptions:
+Sensor and actuator assumptions:
+Communication protocol and revision:
+Timing and synchronization assumptions:
+Diagnostic and watchdog assumptions:
+Reset and restart assumptions:
+Environmental and EMC assumptions:
+Required integration and fault-injection tests:
+Change-notification authority:
+<<<
+LIMITATIONS: >>>
+Approved fault exclusions:
+Known anomalies:
+Residual component limitations:
+Unsupported combinations:
+Required external safety measures:
+Changes invalidating approval:
+<<<
+TAILORING_RATIONALE: None. Safety-critical implementation, verification, configuration control, and independent review are required.
+INDEPENDENCE: IndependentPerson
+APPROVAL_AUTHORITY: Template safety component authority
+APPROVAL: Replace with approver, decision, date, conditions, baseline, and retained approval reference.
+TAGS: template, milestone, safety-critical, component, integration-readiness
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CTRL-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-CMP-002
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-IF-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: IMP-TEMPLATE-VER-002
+  ROLE: Includes
+
+[MILESTONE]
+UID: MILESTONE-TEMPLATE-SYSTEM-001
+STATUS: Planned
+TITLE: Template integrated system ready for safety validation
+SAFETY_RELEVANCE: SafetyCritical
+GATE_TYPE: ValidationReview
+PROJECT: Template mixed-criticality product
+COMPONENT: Integrated template product
+SCOPE: All safety-critical and non-safety-related components, safety-boundary interfaces, product variants, parameters, calibrations, models, and operating modes included in the validation candidate.
+BASELINE: Replace with a system configuration index identifying every hardware, software, firmware, parameter, calibration, model, data, and interface baseline.
+NEXT_ACTIVITY: Safety validation under representative intended use and reasonably foreseeable misuse.
+DESCRIPTION: Confirm that compatible component baselines have been integrated and that the identified system baseline is ready for safety validation.
+TARGET_DATE: Replace with an ISO 8601 date
+EXIT_CRITERIA: >>>
+- component readiness milestones are approved
+- the system configuration index identifies every integrated baseline
+- safety boundaries and interfaces are verified
+- invalid, missing, late, stale, duplicated, reordered, and corrupted input is tested
+- startup, shutdown, update, reset, recovery, and degraded modes preserve safety
+- resource exhaustion and lower-assurance failure cannot prevent required responses
+- integrated response-time budgets are verified
+- cybersecurity impact on safety is evaluated
+- system fault injection and robustness testing are complete
+- anomalies and deviations have authorized dispositions
+- validation plans and acceptance criteria are approved
+- independent review recommends progression.
+<<<
+REQUIRED_EVIDENCE: >>>
+- component readiness records
+- system configuration index
+- safety architecture and boundary definition
+- interface and integration reports
+- shared-resource and interference analysis
+- system verification and fault-injection reports
+- lifecycle-mode evidence
+- cybersecurity-to-safety analysis
+- anomaly and deviation dispositions
+- approved validation plan
+- independent review report.
+<<<
+DEPENDENCIES: >>>
+Required component milestones:
+Required component baselines:
+System interface baseline:
+Safety parameter and calibration baseline:
+Operating-domain specification:
+Validation environment and equipment:
+External assessors or laboratories:
+<<<
+LIMITATIONS: >>>
+Open anomalies authorized for validation:
+Validation restrictions:
+Excluded variants:
+Environmental limitations:
+Instrumentation differences:
+Conditions requiring renewed verification:
+<<<
+TAILORING_RATIONALE: Replace with None or an approved safety-lifecycle tailoring reference.
+INDEPENDENCE: IndependentPerson
+APPROVAL_AUTHORITY: Template system safety authority
+APPROVAL: Replace with approver, decision, date, conditions, system baseline, and retained approval reference.
+TAGS: template, milestone, safety-critical, system, validation-readiness
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-HAZ-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CTRL-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-ARCH-001
+  ROLE: Includes
+- TYPE: Parent
+  VALUE: IMP-TEMPLATE-VER-002
+  ROLE: Includes
+- TYPE: Child
+  VALUE: MILESTONE-TEMPLATE-COMMS-001
+  ROLE: Depends on
+- TYPE: Child
+  VALUE: MILESTONE-TEMPLATE-SAFETY-001
+  ROLE: Depends on
+
+[TEXT]
+STATEMENT: >>>
+# Tailoring and external mappings
+
+A tailoring rationale must identify the affected scope, omitted or reduced
+activity, engineering or safety rationale, affected requirements and
+interfaces, compensating controls, regression evidence, competent reviewer,
+approval authority, and conditions invalidating the decision.
+
+Optional external mappings may be populated only when a configured
+synchronization adapter owns their Git-managed representation.
+
+Remote workflow state does not establish engineering or safety approval unless
+the controlled lifecycle explicitly defines that meaning.
+
+# Review checklist
+
+Before completing a milestone, confirm that:
+
+- UID, scope, and baseline are stable and unambiguous
+- safety relevance follows from the included artifacts and decision
+- the next activity authorized by approval is clear
+- all relations resolve
+- exit criteria have objective evidence
+- interface revisions and compatibility constraints are identified
+- anomalies and limitations have authorized dispositions
+- required regression is defined
+- required independence and approval are recorded
+- external mappings are explicit and unique
+- no credentials or transient authentication data are present.
+<<<

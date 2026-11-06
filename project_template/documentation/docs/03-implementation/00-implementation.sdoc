@@ -1,0 +1,514 @@
+[DOCUMENT]
+TITLE: Implementation and Verification
+OPTIONS:
+  MARKUP: Markdown
+
+[GRAMMAR]
+ELEMENTS:
+- TAG: IMPLEMENTATION
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: STATUS
+    TYPE: SingleChoice(Planned, Ready, InProgress, Blocked, Complete, Cancelled)
+    REQUIRED: True
+  - TITLE: TITLE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: PHASE
+    TYPE: SingleChoice(Foundation, Core, EdgeCase, ErrorHandling, Verification, Validation, Completion)
+    REQUIRED: True
+  - TITLE: TYPE
+    TYPE: SingleChoice(Task, TestPlan, TestCase, Verification, Validation)
+    REQUIRED: True
+  - TITLE: SAFETY_RELEVANCE
+    TYPE: SingleChoice(NotSafetyRelated, SafetyRelated, SafetyCritical)
+    REQUIRED: True
+  - TITLE: INDEPENDENCE
+    TYPE: SingleChoice(None, Peer, IndependentPerson, IndependentOrganization, ExternalAssessor)
+    REQUIRED: False
+  - TITLE: BASELINE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EVIDENCE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: REVIEWER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: REVIEW_DATE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: STATEMENT
+    TYPE: String
+    REQUIRED: True
+  - TITLE: PREREQUISITES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: OUTPUTS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TEST_LEVEL
+    TYPE: SingleChoice(Unit, Component, Integration, System, Acceptance)
+    REQUIRED: False
+  - TITLE: TEST_METHOD
+    TYPE: SingleChoice(Automated, Manual, Analysis, Inspection, FaultInjection, Simulation)
+    REQUIRED: False
+  - TITLE: PROCEDURE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EXPECTED_RESULT
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ACTUAL_RESULT
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RESULT
+    TYPE: SingleChoice(Pending, Passed, Failed, Blocked)
+    REQUIRED: False
+  - TITLE: RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: COMMENT
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TAGS
+    TYPE: Tag
+    REQUIRED: False
+  - TITLE: EFFORT_MIN
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EFFORT_LIKELY
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EFFORT_MAX
+    TYPE: String
+    REQUIRED: False
+  RELATIONS:
+  - TYPE: Parent
+    ROLE: Implements or verifies
+  - TYPE: Child
+    ROLE: Depends on
+  - TYPE: File
+    ROLE: Implemented by
+
+[TEXT]
+STATEMENT: >>>
+# Purpose and workflow
+
+Implementation records define work, verification strategy, repeatable test
+procedures, and completed evidence.
+
+Use immutable UIDs with this form:
+
+```text
+IMP-[MODULE]-[TYPE]-[NNN]
+```
+
+Supported type segments are:
+
+- `TASK` for implementation tasks
+- `PLAN` for test plans
+- `TEST` for test cases
+- `VER` for verification and validation records.
+
+Planning artifacts describe intended work. Verification records describe
+completed checks. Completing a task does not verify a requirement.
+
+```mermaid
+flowchart LR
+    REQ[Requirement] --> DES[Design]
+    DES --> TASK[Task]
+    TASK --> PLAN[Test plan]
+    PLAN --> TEST[Test case]
+    TEST --> VER[Verification record]
+```
+
+A `Child` relation represents a dependency. The referenced record must be
+satisfied before the dependent activity begins, unless an approved exception is
+recorded.
+<<<
+
+[IMPLEMENTATION]
+UID: IMP-TEMPLATE-TASK-001
+STATUS: Planned
+TITLE: Implement template functional capability
+PHASE: Core
+TYPE: Task
+SAFETY_RELEVANCE: NotSafetyRelated
+STATEMENT: Implement the functional behavior allocated to the template communications component.
+PREREQUISITES: Reviewed requirements, design, and interface baseline.
+OUTPUTS: >>>
+- source and configuration changes
+- automated checks
+- updated operational documentation
+- review record
+- identified build artifact.
+<<<
+RATIONALE: The task realizes REQ-TEMPLATE-FR-001 using DES-TEMPLATE-CMP-001.
+COMMENT: Completion requires review and successful automated checks; requirement verification remains separate.
+TAGS: template, task, core
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-FR-001
+  ROLE: Implements or verifies
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-CMP-001
+  ROLE: Implements or verifies
+
+[IMPLEMENTATION]
+UID: IMP-TEMPLATE-TASK-002
+STATUS: Planned
+TITLE: Implement template safety function
+PHASE: Core
+TYPE: Task
+SAFETY_RELEVANCE: SafetyCritical
+STATEMENT: Implement the allocated protective-stop behavior, diagnostics, safe-state command, reset handling, and restart inhibition in the template safety controller.
+PREREQUISITES: Approved safety requirement, safety function, safety architecture, component design, and interface contract.
+OUTPUTS: >>>
+- controlled source and configuration changes
+- traceable safety parameters
+- static-analysis and review results
+- unit and component tests
+- build and configuration identification
+- anomaly records.
+<<<
+RATIONALE: The task implements REQ-TEMPLATE-SAFE-001 and SAFE-TEMPLATE-FUNC-001 in DES-TEMPLATE-CMP-002.
+COMMENT: Required methods, competence, independence, tool controls, and change control are defined by the safety plan.
+TAGS: template, task, safety-critical
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Implements or verifies
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Implements or verifies
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-CMP-002
+  ROLE: Implements or verifies
+
+[IMPLEMENTATION]
+UID: IMP-TEMPLATE-PLAN-001
+STATUS: Planned
+TITLE: Template verification plan
+PHASE: Verification
+TYPE: TestPlan
+SAFETY_RELEVANCE: SafetyCritical
+INDEPENDENCE: IndependentPerson
+STATEMENT: Verify the template functional and safety requirements using component, integration, system, analysis, and fault-injection evidence.
+PREREQUISITES: Approved requirements, design baseline, test environments, test data, acceptance criteria, responsibilities, and independence.
+OUTPUTS: >>>
+- nominal-behavior test cases
+- boundary and error-path test cases
+- safety-boundary and interface tests
+- timing and fault-injection tests
+- retained execution evidence
+- documented failure and deviation dispositions.
+<<<
+TEST_LEVEL: System
+TEST_METHOD: Automated
+RATIONALE: The combined methods address externally observable behavior, safety response, timing, containment, and specified fault behavior.
+COMMENT: >>>
+Scope: REQ-TEMPLATE-FR-001 and REQ-TEMPLATE-SAFE-001
+Out of scope: Replace with explicit exclusions
+Environment: Replace with controlled environment identification
+Entry criteria: Approved inputs and identified candidate baseline
+Exit criteria: Required cases executed and reviewed; failures dispositioned
+Evidence location: Replace with durable evidence repository
+Responsible role: Verification owner
+<<<
+TAGS: template, test-plan, safety
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-FR-001
+  ROLE: Implements or verifies
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Implements or verifies
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-IF-001
+  ROLE: Implements or verifies
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-TASK-001
+  ROLE: Depends on
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-TASK-002
+  ROLE: Depends on
+
+[IMPLEMENTATION]
+UID: IMP-TEMPLATE-TEST-001
+STATUS: Planned
+TITLE: Template nominal functional test
+PHASE: Verification
+TYPE: TestCase
+SAFETY_RELEVANCE: NotSafetyRelated
+INDEPENDENCE: Peer
+STATEMENT: Verify that the template component produces the specified functional result under nominal conditions.
+PREREQUISITES: Approved test plan, completed implementation task, controlled environment, and identified test data.
+OUTPUTS: Test report, raw logs, actual result, expected-result comparison, and anomaly references.
+TEST_LEVEL: Component
+TEST_METHOD: Automated
+PROCEDURE: >>>
+1. Configure the identified component baseline.
+2. Establish the specified nominal preconditions.
+3. Provide the defined valid input.
+4. Observe the externally visible output and state.
+5. Retain raw logs and configuration identification.
+<<<
+EXPECTED_RESULT: The component produces the measurable result required by REQ-TEMPLATE-FR-001 without a prohibited side effect.
+RESULT: Pending
+RATIONALE: The case independently checks the nominal functional behavior.
+TAGS: template, test-case, functional
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-FR-001
+  ROLE: Implements or verifies
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-PLAN-001
+  ROLE: Depends on
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-TASK-001
+  ROLE: Depends on
+
+[IMPLEMENTATION]
+UID: IMP-TEMPLATE-TEST-002
+STATUS: Planned
+TITLE: Template safety-boundary and fault-response test
+PHASE: Verification
+TYPE: TestCase
+SAFETY_RELEVANCE: SafetyCritical
+INDEPENDENCE: IndependentPerson
+STATEMENT: Verify that invalid, missing, stale, duplicated, reordered, malformed, unauthorized, or excessive-rate input cannot prevent the required protective-stop response.
+PREREQUISITES: Approved test plan, integrated candidate baseline, controlled fault-injection capability, calibrated equipment, and approved acceptance criteria.
+OUTPUTS: Raw fault-injection data, timing results, logs, configuration records, report, and anomaly references.
+TEST_LEVEL: Integration
+TEST_METHOD: FaultInjection
+PROCEDURE: >>>
+1. Identify hardware, software, parameters, calibration, and interface revision.
+2. Establish each approved initial state and operating mode.
+3. Inject each specified interface or dependency fault separately.
+4. Demand the protective-stop safety function.
+5. Measure detection, logic, communication, actuation, and safe-state timing.
+6. Confirm diagnostics, latching, reset, and restart behavior.
+7. Repeat justified fault combinations and environmental boundary conditions.
+8. Retain raw evidence and all deviations from the approved procedure.
+<<<
+EXPECTED_RESULT: The system rejects or contains invalid input, reaches the validated safe state within the allocated response time, reports required diagnostics, and inhibits restart until reset conditions are satisfied.
+RESULT: Pending
+RATIONALE: The test directly evaluates the boundary assumptions and fault behavior relied upon by the safety architecture.
+TAGS: template, test-case, safety, fault-injection
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Implements or verifies
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Implements or verifies
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-IF-001
+  ROLE: Implements or verifies
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-PLAN-001
+  ROLE: Depends on
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-TASK-002
+  ROLE: Depends on
+
+[IMPLEMENTATION]
+UID: IMP-TEMPLATE-VER-001
+STATUS: Planned
+TITLE: Template functional verification record
+PHASE: Verification
+TYPE: Verification
+SAFETY_RELEVANCE: NotSafetyRelated
+INDEPENDENCE: Peer
+BASELINE: Replace after execution with immutable software, build, configuration, procedure, and data identifiers
+EVIDENCE: Replace after execution with a durable evidence reference
+REVIEWER: Replace after execution with reviewer identity
+REVIEW_DATE: Replace after execution with an ISO 8601 date
+STATEMENT: Record whether execution of IMP-TEMPLATE-TEST-001 verifies REQ-TEMPLATE-FR-001 for the identified baseline.
+PREREQUISITES: Completed and approved test case, identified baseline, controlled environment, and accepted test equipment.
+OUTPUTS: Retained report, raw results, expected-to-actual comparison, anomaly dispositions, and approval.
+TEST_LEVEL: Component
+TEST_METHOD: Automated
+EXPECTED_RESULT: The component satisfies every acceptance criterion of REQ-TEMPLATE-FR-001.
+ACTUAL_RESULT: Replace after execution; do not mark this record complete until actual results and evidence are present.
+RESULT: Pending
+RATIONALE: A separate execution record preserves the distinction between the planned procedure and its result.
+COMMENT: >>>
+Execution date:
+Executed by:
+Product variant:
+Software commit:
+Build identifier:
+Configuration version:
+Procedure revision:
+Environment:
+Tool versions:
+Result:
+Actual result:
+Raw evidence:
+Report:
+Deviations:
+Anomalies:
+Disposition:
+Approval:
+<<<
+TAGS: template, verification, evidence
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-FR-001
+  ROLE: Implements or verifies
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-TEST-001
+  ROLE: Depends on
+
+[IMPLEMENTATION]
+UID: IMP-TEMPLATE-VER-002
+STATUS: Planned
+TITLE: Template safety verification record
+PHASE: Verification
+TYPE: Verification
+SAFETY_RELEVANCE: SafetyCritical
+INDEPENDENCE: IndependentPerson
+BASELINE: Replace after execution with immutable hardware, software, parameters, calibration, interface, procedure, and environment identifiers
+EVIDENCE: Replace after execution with a durable safety-verification report and raw-evidence reference
+REVIEWER: Replace after execution with the independent reviewer identity
+REVIEW_DATE: Replace after execution with an ISO 8601 date
+STATEMENT: Record whether execution of IMP-TEMPLATE-TEST-002 verifies the protective-stop requirement, safety function, and safety-boundary assumptions for the identified baseline.
+PREREQUISITES: Approved procedure, release-candidate configuration, calibrated equipment, controlled environment, competent personnel, and required independence.
+OUTPUTS: Retained report and raw results, timing measurements, fault-injection evidence, deviations, anomalies, dispositions, and independent decision.
+TEST_LEVEL: System
+TEST_METHOD: FaultInjection
+EXPECTED_RESULT: All specified demands and faults result in the required safe response, diagnostics, reset behavior, and restart inhibition within allocated limits.
+ACTUAL_RESULT: Replace after execution; preserve failed and blocked executions as separate immutable records.
+RESULT: Pending
+RATIONALE: The method exercises safety behavior that cannot be established by nominal functional testing alone.
+COMMENT: >>>
+Execution date:
+Executed by:
+Reviewed by:
+Independence satisfied by:
+Product variant and specimen:
+Hardware revision:
+Software or firmware commit:
+Build identifier:
+Safety parameter and calibration version:
+Interface revision:
+Procedure revision:
+Tools and equipment:
+Calibration status:
+Environment and load:
+Result:
+Actual timing:
+Expected timing:
+Raw evidence:
+Report:
+Deviations:
+Anomalies:
+Disposition:
+Regression scope:
+Approval:
+<<<
+TAGS: template, verification, safety, evidence
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Implements or verifies
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CTRL-001
+  ROLE: Implements or verifies
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Implements or verifies
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-TEST-002
+  ROLE: Depends on
+
+[IMPLEMENTATION]
+UID: IMP-TEMPLATE-VER-003
+STATUS: Planned
+TITLE: Template safety validation record
+PHASE: Validation
+TYPE: Validation
+SAFETY_RELEVANCE: SafetyCritical
+INDEPENDENCE: IndependentOrganization
+BASELINE: Replace after execution with the immutable release-candidate system configuration
+EVIDENCE: Replace after execution with a durable validation-report reference
+REVIEWER: Replace after execution with the independent validation reviewer
+REVIEW_DATE: Replace after execution with an ISO 8601 date
+STATEMENT: Record whether the integrated protective-stop risk control is suitable under representative intended use and reasonably foreseeable misuse.
+PREREQUISITES: Approved hazard analysis, integrated release candidate, approved validation plan, representative conditions and operators, and required independence.
+OUTPUTS: Retained validation report, raw evidence, confirmed or rejected assumptions, residual-risk findings, anomalies, follow-up actions, and independent recommendation.
+TEST_LEVEL: Acceptance
+TEST_METHOD: Manual
+EXPECTED_RESULT: The released configuration provides the validated safety response throughout its approved operating domain and identified foreseeable misuse scenarios.
+ACTUAL_RESULT: Replace after execution and retain all failed, blocked, and passing executions separately.
+RESULT: Pending
+RATIONALE: Representative product-level scenarios are required to validate suitability, not merely conformance to component inputs.
+COMMENT: >>>
+Intended use covered:
+Foreseeable misuse covered:
+Operating modes:
+Environmental limits:
+Terrain and surface:
+Payload and tool configurations:
+Human interaction scenarios:
+Communication-loss scenarios:
+Localization and navigation faults:
+Battery, charging, thermal, and fire scenarios:
+Emergency and protective-stop scenarios:
+Maintenance and recovery scenarios:
+Result:
+Residual-risk observations:
+Evidence:
+Open anomalies:
+Corrective actions:
+Independent conclusion:
+Release recommendation:
+<<<
+TAGS: template, validation, safety, evidence
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Implements or verifies
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CTRL-001
+  ROLE: Implements or verifies
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Implements or verifies
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-VER-002
+  ROLE: Depends on
+
+[TEXT]
+STATEMENT: >>>
+# Execution rules
+
+Safety-related evidence is valid only for an identified configuration. Record,
+as applicable:
+
+- product variant and specimen identity
+- hardware revision
+- software and firmware commit or immutable build
+- parameter and calibration versions
+- model, map, and test-data versions
+- interface and procedure revisions
+- tool and test-equipment versions
+- calibration status
+- environmental, surface, and loading conditions
+- deviations from the approved procedure.
+
+Evidence must be durable, access controlled, reviewable, and retained under the
+project policy. A mutable dashboard must not be the only evidence.
+
+Do not edit a failed record into a passing record. Create a new execution
+record and preserve the failed result and disposition.
+
+Implementation is complete only when outputs exist, required reviews and checks
+are complete, verification evidence is tied to the tested baseline, failures
+have dispositions, traceability is complete, required independence is
+satisfied, and unresolved anomalies are accepted by authorized roles.
+<<<

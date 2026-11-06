@@ -1,0 +1,240 @@
+version: "3"
+
+tasks:
+
+  _setup:
+    dir: /workspace
+    cmds:
+      - |
+        set -eu
+        env_file=/workspace/.cline/.env
+        if [ ! -f /workspace/.cline/.env ] || ! grep -Eq '^UPSTREAM_API_KEY=.+$' /workspace/.cline/.env || grep -Eq '^UPSTREAM_API_KEY=replace-with-' /workspace/.cline/.env; then
+          echo "Using existing Cline provider configuration."
+        else
+          echo "Configure Cline's OpenAI-compatible provider with base URL http://ai-proxy:4000 and a dummy API key to use the shared proxy."
+        fi
+
+  _proxy-ensure:
+    dir: /workspace
+    deps: [_setup]
+    cmds:
+      - |
+        set -eu
+        env_file=/workspace/.cline/.env
+        if [ ! -f "$env_file" ] || ! grep -Eq '^UPSTREAM_API_KEY=.+$' "$env_file" || grep -Eq '^UPSTREAM_API_KEY=replace-with-' "$env_file"; then
+          echo "Shared proxy disabled; using existing Cline provider configuration."
+          exit 0
+        fi
+
+        docker network inspect agent-mesh >/dev/null 2>&1 || docker network create agent-mesh >/dev/null || docker network inspect agent-mesh >/dev/null
+        if ! docker inspect ai-proxy >/dev/null 2>&1; then
+          docker compose --project-name agent-platform --file /workspace/compose.yaml --project-directory /workspace --profile cline-proxy up -d ai-proxy || docker inspect ai-proxy >/dev/null
+        elif [ "$(docker inspect ai-proxy | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["State"]["Running"])')" != "True" ]; then
+          docker start ai-proxy >/dev/null
+        fi
+        proxy_networks=$(docker inspect ai-proxy | python3 -c 'import json,sys; print(" ".join(json.load(sys.stdin)[0]["NetworkSettings"]["Networks"]))')
+        if [[ "$proxy_networks" != *agent-mesh* ]]; then
+          docker network connect agent-mesh ai-proxy || docker inspect ai-proxy | python3 -c 'import json,sys; sys.exit("agent-mesh" not in json.load(sys.stdin)[0]["NetworkSettings"]["Networks"])'
+        fi
+        container_networks=$(docker inspect "$HOSTNAME" | python3 -c 'import json,sys; print(" ".join(json.load(sys.stdin)[0]["NetworkSettings"]["Networks"]))')
+        if [[ "$container_networks" != *agent-mesh* ]]; then
+          docker network connect agent-mesh "$HOSTNAME" || docker inspect "$HOSTNAME" | python3 -c 'import json,sys; sys.exit("agent-mesh" not in json.load(sys.stdin)[0]["NetworkSettings"]["Networks"])'
+        fi
+
+        for attempt in $(seq 1 30); do
+          if python3 -c 'import urllib.request; urllib.request.urlopen("http://ai-proxy:4000/health", timeout=1)'; then
+            echo "Shared rate-limiting proxy is healthy."
+            exit 0
+          fi
+          sleep 1
+        done
+        echo "Shared proxy ai-proxy:4000 did not become healthy. Check /workspace/.cline/.env." >&2
+        exit 1
+
+  launch:
+    desc: Start Cline using the existing provider configuration (optionally via proxy)
+    deps: [_proxy-ensure]
+    cmds:
+      - |
+        CONFIG_PATH=$(realpath .cline)
+        if [ -n "{{.CLI_ARGS}}" ]; then
+          cline --config "$CONFIG_PATH/" --data-dir "$CONFIG_PATH/data" "{{.CLI_ARGS}}"
+        else
+          cline -i --config "$CONFIG_PATH/" --data-dir "$CONFIG_PATH/data"
+        fi
+
+  worktree:
+    desc: "Spawn an explicit git worktree and branch, then launch interactive Cline. Usage: task cline:worktree -- [branch-name]"
+    cmds:
+      - |
+        task cline:_proxy-ensure
+
+        # Use Go-Task template evaluation to catch CLI arguments passed after '--'
+        INPUT_BRANCH="{{.CLI_ARGS}}"
+
+        if [ -n "$INPUT_BRANCH" ]; then
+          BRANCH="$INPUT_BRANCH"
+        else
+          read -r -p "Enter a branch name: " BRANCH
+          if [ -z "$BRANCH" ]; then
+            echo "Branch name cannot be empty." >&2
+            exit 1
+          fi
+        fi
+
+        # Define a predictable worktree path inside .cline/worktrees/
+        WORKTREE_PATH=".cline/worktrees/$BRANCH"
+
+        echo "Creating worktree for branch '$BRANCH' at $WORKTREE_PATH..."
+        git worktree add -b "$BRANCH" "$WORKTREE_PATH"
+
+        mkdir -p "$WORKTREE_PATH/.cline/data/settings"
+        if [ ! -f "$WORKTREE_PATH/.cline/data/settings/providers.json" ] && [ -f ".cline/data/settings/providers.json" ]; then
+          cp ".cline/data/settings/providers.json" "$WORKTREE_PATH/.cline/data/settings/providers.json"
+        fi
+
+        # Navigate into the new worktree and launch Cline interactively
+        cd "$WORKTREE_PATH" || exit 1
+        CONFIG_PATH=$(realpath .cline)
+        echo "Launching interactive session..."
+        cline -i --config "$CONFIG_PATH/" --data-dir "$CONFIG_PATH/data"
+
+  select-worktree:
+    desc: Prompts for worktree selection
+    cmds:
+      - |
+        bash -c '
+        # Clean up any worktree references whose directories were manually deleted
+        git worktree prune
+
+        WORKTREE_PATHS=$(git worktree list --porcelain | grep "^worktree" | cut -d" " -f2 | tail -n +2)
+
+        if [ -z "$WORKTREE_PATHS" ]; then
+          echo "No active worktrees found." >&2
+          exit 1
+        fi
+
+        menu=()
+        paths=()
+
+        while IFS= read -r path; do
+          [ -z "$path" ] && continue
+          if [ ! -d "$path" ]; then
+            continue
+          fi
+          branch=$(git -C "$path" branch --show-current 2>/dev/null)
+          if [ -z "$branch" ] || [ "$branch" = "HEAD" ]; then
+            branch=$(git -C "$path" rev-parse --short HEAD 2>/dev/null)
+          fi
+          msg=$(git -C "$path" log -1 --pretty=format:"%s" 2>/dev/null)
+          menu+=("Branch: [$branch] - \"$msg\" ($path)")
+          paths+=("$path")
+        done <<< "$WORKTREE_PATHS"
+
+        if [ ${#menu[@]} -eq 0 ]; then
+          echo "No active worktrees found." >&2
+          exit 1
+        fi
+
+        echo "Select an active worktree session:" >&2
+        select opt in "${menu[@]}"; do
+          if [ -n "$opt" ]; then
+            idx=$((REPLY - 1))
+            echo "${paths[$idx]}"
+            break
+          fi
+        done
+        '
+
+  worktree-shell:
+    desc: "Select an active worktree and open a shell (or run a command) inside it. Usage: task cline:worktree-shell [-- command]"
+    cmds:
+      - |
+        TARGET_PATH=$(task cline:select-worktree | tail -n 1)
+        if [ -z "$TARGET_PATH" ]; then exit 0; fi
+
+        echo "Switching to worktree at: $TARGET_PATH"
+        cd "$TARGET_PATH" || exit 1
+        CLI_ARGS="{{.CLI_ARGS}}"
+        if [ -n "$CLI_ARGS" ]; then
+          echo "Running command: $CLI_ARGS"
+          eval "$CLI_ARGS"
+        else
+          echo "Opening interactive shell in worktree. Type 'exit' to return."
+          SHELL_BIN="${SHELL:-/bin/bash}"
+          exec "$SHELL_BIN"
+        fi
+
+  worktree-resume:
+    desc: Pick an existing worktree to jump into and resume the Cline session.
+    cmds:
+      - |
+        task cline:_proxy-ensure
+
+        TARGET_PATH=$(task cline:select-worktree | tail -n 1)
+        if [ -z "$TARGET_PATH" ]; then exit 0; fi
+
+        PROJECT_PATH=$(pwd)
+        echo "Switching to worktree at: $TARGET_PATH"
+        cd "$TARGET_PATH" || exit 1
+        mkdir -p .cline/data/settings
+        SOURCE_WORKTREE_CONFIG="$PROJECT_PATH/.cline/worktrees/$(basename "$TARGET_PATH")/.cline/data/settings/providers.json"
+        if [ ! -f .cline/data/settings/providers.json ]; then
+          if [ -f "$SOURCE_WORKTREE_CONFIG" ]; then
+            cp "$SOURCE_WORKTREE_CONFIG" .cline/data/settings/providers.json
+          elif [ -f "$PROJECT_PATH/.cline/data/settings/providers.json" ]; then
+            cp "$PROJECT_PATH/.cline/data/settings/providers.json" .cline/data/settings/providers.json
+          fi
+        fi
+        CONFIG_PATH=$(realpath .cline)
+        echo "Launching interactive session..."
+        cline -i --config "$CONFIG_PATH/" --data-dir "$CONFIG_PATH/data"
+
+  worktree-save:
+    desc: Commit and push changes for current or selected worktree.
+    cmds:
+      - |
+        TARGET_PATH=$(task cline:select-worktree | tail -n 1)
+        if [ -z "$TARGET_PATH" ]; then exit 0; fi
+
+        echo "Targeting worktree at: $TARGET_PATH"
+        cd "$TARGET_PATH" || exit 1
+        CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
+        if [ "$CURRENT_BRANCH" = "main" ] || [ "$CURRENT_BRANCH" = "master" ] || [ "$CURRENT_BRANCH" = "develop" ]; then
+          echo "Error: You selected a protected branch ($CURRENT_BRANCH). Aborting."
+          exit 1
+        fi
+
+        echo "Saving progress on branch: $CURRENT_BRANCH"
+        if [ -n "$(git status --porcelain)" ]; then
+          git add .
+          git commit -m "wip: saving intermediate progress from Cline session"
+        else
+          echo "No uncommitted changes to save."
+        fi
+
+        echo "Pushing branch upstream..."
+        git push -u origin "$CURRENT_BRANCH"
+        echo "Successfully pushed latest changes!"
+
+  worktree-cleanup:
+    desc: Cleanup selected worktree and branch.
+    cmds:
+      - |
+        TARGET_PATH=$(task cline:select-worktree | tail -n 1)
+        if [ -z "$TARGET_PATH" ]; then exit 0; fi
+
+        echo "Targeting worktree at: $TARGET_PATH"
+        cd "$TARGET_PATH" || exit 1
+        CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
+        if [ "$CURRENT_BRANCH" = "main" ] || [ "$CURRENT_BRANCH" = "master" ] || [ "$CURRENT_BRANCH" = "develop" ]; then
+          echo "Error: Protected branch. Aborting cleanup."
+          exit 1
+        fi
+
+        MAIN_REPO_PATH=$(git rev-parse --git-common-dir | sed 's/\/\.git$//')
+        cd "$MAIN_REPO_PATH" || exit 1
+        echo "Removing worktree at $TARGET_PATH..."
+        git worktree remove "$TARGET_PATH" --force
+        git branch -d "$CURRENT_BRANCH" || true
+        echo "Cleanup complete! Returned to main repository."

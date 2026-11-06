@@ -1,0 +1,11 @@
+# List any number of repos and any number of files/folders within them
+# They will be placed in git-ignored folders
+git@github.com:molecularprogrammer/container-base:
+  type: git
+  revision: 6f679f28d588dd888bca4f1bb323cb30a92a0cf0
+  files:
+    - path: README.md
+      dest: new_folder/README.md
+    # Folder example
+    # - path: project_template/documentation
+    #   dest: other_documentation

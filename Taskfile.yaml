@@ -1,0 +1,101 @@
+version: "3"
+
+includes:
+  cline:
+    taskfile: ./.cline/Taskfile.yaml
+    flatten: false
+
+tasks:
+
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  test-proxy:
+    desc: Run the proxy unit tests
+    cmds:
+      - python3 -m unittest discover -s proxy -p 'test_*.py' -v
+
+  test-integration:
+    desc: Build the developer image and test project-template installation and documentation export
+    cmds:
+      - ./integration_test.sh
+
+  ensure-test-project:
+    desc: Install the project template in test_project when it is absent
+    preconditions:
+      - sh: test -n "${HOST_PWD:-}"
+        msg: HOST_PWD must name the project path visible to the host Docker daemon; run this task with ./task.sh
+      - sh: test -f /workspace/Dockerfile
+        msg: Run this task inside the container-base developer container
+    cmds:
+      - |
+        set -eu
+        project=/workspace/test_project
+
+        if [ -f "$project/Taskfile.yaml" ] && [ -f "$project/documentation/compose.yaml" ]; then
+          exit 0
+        fi
+
+        image=local/container-base:test-template
+        host_project="${HOST_PWD}/test_project"
+
+        mkdir -p "$project"
+        docker build \
+          --tag "$image" \
+          --file /workspace/Dockerfile \
+          /workspace
+        docker run --rm \
+          --user "$(id -u):$(id -g)" \
+          --volume "$host_project:/workspace" \
+          "$image" task \
+          --taskfile /project_template/Taskfile.yaml install "tag=test-template"
+
+  test-strictdoc:
+    desc: Build the StrictDoc image and export documentation through the host Docker daemon
+    preconditions:
+      - sh: test -n "${HOST_PWD:-}"
+        msg: HOST_PWD must name the project path visible to the host Docker daemon; run this task with ./task.sh
+      - sh: test -f /workspace/strictdoc/Dockerfile
+        msg: Run this task inside the container-base developer container
+    cmds:
+      - task ensure-test-project
+      - |
+        set -eu
+        image=local/strictdoc:task-test
+        host_project="${HOST_PWD}/test_project"
+
+        docker build \
+          --tag "$image" \
+          --file /workspace/strictdoc/Dockerfile \
+          /workspace/strictdoc
+
+        export STRICTDOC_IMAGE="$image"
+        export HOST_PWD="$host_project"
+        docker compose \
+          --file /workspace/test_project/documentation/compose.yaml \
+          --project-directory /workspace/test_project/documentation \
+          config --quiet
+
+        docker compose \
+          --file /workspace/test_project/documentation/compose.yaml \
+          --project-directory /workspace/test_project/documentation \
+          run --rm strictdoc export /workspace \
+          --config /workspace/strictdoc_config.py \
+          --formats=html \
+          --generate-bundle-document
+
+        test -s /workspace/test_project/documentation/output/html/index.html
+
+  test:
+    desc: Run unit and container integration tests
+    cmds:
+      - task test-proxy
+      - task test-integration
+      - task test-strictdoc
+
+  bash:
+    desc: Enter this container
+    cmds:
+      - bash
