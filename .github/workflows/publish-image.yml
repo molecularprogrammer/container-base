@@ -22,11 +22,21 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Run proxy unit tests
-        run: python3 -m unittest discover -s proxy -p 'test_*.py' -v
-
-      - name: Run container integration tests
-        run: ./integration_test.sh
+      - name: Run tests in the published developer container
+        env:
+          CONTAINER_IMAGE: ghcr.io/molecularprogrammer/container-base:latest
+        run: |
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            --group-add "$(stat -c '%g' /var/run/docker.sock)" \
+            --volume "${GITHUB_WORKSPACE}:/workspace" \
+            --volume /var/run/docker.sock:/var/run/docker.sock \
+            --env HOST_UID="$(id -u)" \
+            --env HOST_GID="$(id -g)" \
+            --env HOST_DOCKER_GID="$(stat -c '%g' /var/run/docker.sock)" \
+            --env HOST_PWD="${GITHUB_WORKSPACE}" \
+            --env SSH_AUTH_SOCK=/dev/null \
+            "${CONTAINER_IMAGE}" task test
 
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
