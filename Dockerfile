@@ -57,6 +57,8 @@ RUN git config --global --add safe.directory /workspace
 RUN curl -fsSL "https://github.com/go-task/task/releases/download/v${TASK_VERSION}/task_linux_amd64.tar.gz" \
     | tar xz -C /usr/local/bin task
 
+RUN npm install -g cline
+
 # Copy local proxy script into the image
 COPY fetch_deps.py /opt/fetch_deps.py
 
