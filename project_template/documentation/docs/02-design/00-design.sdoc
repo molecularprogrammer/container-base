@@ -1,0 +1,340 @@
+[DOCUMENT]
+TITLE: Design
+OPTIONS:
+  MARKUP: Markdown
+
+[GRAMMAR]
+ELEMENTS:
+- TAG: DESIGN
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: STATUS
+    TYPE: SingleChoice(Draft, Active, Deprecated, Deleted)
+    REQUIRED: True
+  - TITLE: TITLE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: TYPE
+    TYPE: SingleChoice(DESIGN)
+    REQUIRED: True
+  - TITLE: DESIGN_TYPE
+    TYPE: SingleChoice(Architecture, Component, Interface, Decision)
+    REQUIRED: True
+  - TITLE: DESIGN_DEPTH
+    TYPE: SingleChoice(Basic, Standard, Deep)
+    REQUIRED: True
+  - TITLE: SAFETY_RELEVANCE
+    TYPE: SingleChoice(NotSafetyRelated, SafetyRelated, SafetyCritical)
+    REQUIRED: True
+  - TITLE: STATEMENT
+    TYPE: String
+    REQUIRED: True
+  - TITLE: RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: SAFETY_BOUNDARY
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INTERFERENCE_CONTROLS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INTERFACE_CONTRACT
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONSTRAINTS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONSEQUENCES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ALTERNATIVES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CHANGE_IMPACT
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TAGS
+    TYPE: Tag
+    REQUIRED: False
+  RELATIONS:
+  - TYPE: Parent
+    ROLE: Implements or refines
+  - TYPE: File
+    ROLE: Implemented by
+  - TYPE: Parent
+    ROLE: Component satisifies
+
+[TEXT]
+STATEMENT: >>>
+# Design purpose
+
+Design records allocate requirements to architecture, components, interfaces,
+and consequential decisions.
+
+Use immutable UIDs with this form:
+
+```text
+DES-[MODULE]-[TYPE]-[NNN]
+```
+
+Supported type segments are `ARCH`, `CMP`, `IF`, and `DEC`.
+
+Design depth is not a safety classification:
+
+- `Basic` establishes boundaries, responsibilities, and direct allocation
+- `Standard` also establishes interfaces, dependencies, and decisions
+- `Deep` also establishes detailed contracts, failure behavior, safety
+  boundaries, interference controls, degraded behavior, and verification
+  implications.
+
+Safety-critical components and safety-boundary interfaces normally require
+`Deep` design.
+
+Classify a design as:
+
+- `NotSafetyRelated` only when it cannot reasonably affect a hazard, safety
+  function, risk control, or safety assumption
+- `SafetyRelated` when it supports or can interfere with safety behavior
+- `SafetyCritical` when it implements or allocates a safety requirement,
+  function, integrity target, or required fault response.
+<<<
+
+[DESIGN]
+UID: DES-TEMPLATE-ARCH-001
+STATUS: Draft
+TITLE: Template system architecture
+TYPE: DESIGN
+DESIGN_TYPE: Architecture
+DESIGN_DEPTH: Deep
+SAFETY_RELEVANCE: SafetyRelated
+STATEMENT: The system is organized into explicitly owned components, with safety-critical responsibilities contained within a defined safety boundary and lower-assurance interactions constrained by controlled interfaces.
+RATIONALE: The architecture separates safety responsibilities from non-safety services while retaining explicit integration and shared-resource obligations.
+SAFETY_BOUNDARY: >>>
+Boundary name: Template safety boundary
+Components inside: Template safety controller
+Components outside: Template communications component and external services
+Protected safety requirements: REQ-TEMPLATE-SAFE-001
+Protected safety functions: SAFE-TEMPLATE-FUNC-001
+Permitted interactions: Versioned, validated, bounded requests and status
+Prohibited interactions: Unrestricted safety commands and direct modification of protected parameters
+External assumptions: Replace with reviewed assumptions
+Failure-containment objective: Lower-assurance failures do not prevent the required safe response
+Evidence required: Interface, robustness, resource, timing, and fault-injection evidence
+<<<
+INTERFERENCE_CONTROLS: >>>
+Command validation: Validate identity, authorization, state, range, and sequence
+Data validation: Validate schema, range, freshness, sequence, and integrity
+Timeout and fallback: Enter the defined fallback state within a bounded time
+Resource partitioning: Bound CPU, memory, storage, network, and logging consumption
+Configuration authority: Restrict changes to protected configuration
+Monitoring: Detect communication, resource, and dependency failures
+Common-cause controls: Identify shared power, timing, tools, and update mechanisms
+<<<
+CONSTRAINTS: Replace with platform, deployment, timing, power, environmental, security, and compliance constraints.
+CONSEQUENCES: Changes to component allocation, boundaries, shared resources, or interface semantics require safety-impact analysis and integration regression.
+TAGS: template, architecture, safety-boundary
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-FR-001
+  ROLE: Implements or refines
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Implements or refines
+
+[DESIGN]
+UID: DES-TEMPLATE-CMP-001
+STATUS: Draft
+TITLE: Template non-safety-related component
+TYPE: DESIGN
+DESIGN_TYPE: Component
+DESIGN_DEPTH: Standard
+SAFETY_RELEVANCE: NotSafetyRelated
+STATEMENT: The communications component provides operational communication and storage without implementing a safety function.
+RATIONALE: Its responsibilities are operational, and safety-relevant interactions are constrained by a separate safety-boundary interface.
+SAFETY_BOUNDARY: The component remains outside the template safety boundary.
+INTERFERENCE_CONTROLS: >>>
+Permitted interactions: Bounded requests and status
+Prohibited interactions: Direct actuator control and protected parameter modification
+Input and command validation: Performed by the receiving safety-related component
+Timeout and fallback: The receiving component does not depend on timely communication for safe response
+Resource limits: CPU, memory, storage, bandwidth, and logging limits are enforced
+Configuration and updates: Versioned and authorized
+Monitoring: Health and resource status are observable
+<<<
+CONSTRAINTS: The component must comply with the approved interface revision and resource limits.
+CONSEQUENCES: Its lightweight verification does not replace receiving-system integration and containment evidence.
+TAGS: template, component, non-safety
+RELATIONS:
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-ARCH-001
+  ROLE: Implements or refines
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-FR-001
+  ROLE: Implements or refines
+
+[DESIGN]
+UID: DES-TEMPLATE-CMP-002
+STATUS: Draft
+TITLE: Template safety-critical component
+TYPE: DESIGN
+DESIGN_TYPE: Component
+DESIGN_DEPTH: Deep
+SAFETY_RELEVANCE: SafetyCritical
+STATEMENT: The safety controller implements the allocated protective-stop logic, diagnostics, safe-state command, reset handling, and restart inhibition.
+RATIONALE: The component directly implements REQ-TEMPLATE-SAFE-001 and SAFE-TEMPLATE-FUNC-001.
+SAFETY_BOUNDARY: >>>
+Boundary: Template safety boundary
+Allocated safety requirement: REQ-TEMPLATE-SAFE-001
+Allocated safety function: SAFE-TEMPLATE-FUNC-001
+Trusted dependencies: Replace with justified dependencies
+Untrusted dependencies: DES-TEMPLATE-CMP-001
+Required integrity target: Replace with the derived target
+Response-time allocation: Replace with the allocated time
+Safe state: Hazardous motion commanded to the validated safe state
+<<<
+INTERFERENCE_CONTROLS: >>>
+Input validation: Schema, range, freshness, sequence, and state validation
+Output constraints: Bounded commands and independently enforced safe-state behavior
+Diagnostics: Required faults are detected within allocated diagnostic times
+Watchdogs: Independent watchdog behavior is defined and verified
+Fault containment: Fault effects do not propagate outside justified boundaries
+Configuration protection: Safety parameters are versioned, authorized, and integrity checked
+Reset and restart: Faults remain latched where required and restart requires deliberate action
+<<<
+CONSTRAINTS: Replace with hardware, software, environmental, timing, integrity, diagnostic, interface, and certification constraints.
+CONSEQUENCES: Changes require safety-impact analysis and may invalidate component, integration, validation, and release evidence.
+TAGS: template, component, safety-critical
+RELATIONS:
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-ARCH-001
+  ROLE: Implements or refines
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Implements or refines
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Implements or refines
+
+[DESIGN]
+UID: DES-TEMPLATE-IF-001
+STATUS: Draft
+TITLE: Template safety-boundary interface
+TYPE: DESIGN
+DESIGN_TYPE: Interface
+DESIGN_DEPTH: Deep
+SAFETY_RELEVANCE: SafetyRelated
+STATEMENT: The interface permits bounded operational requests from the communications component to the safety controller without allowing the communications component to violate the protective-stop requirement.
+RATIONALE: The cross-boundary interaction is required for operation but must not transfer unrestricted safety authority.
+SAFETY_BOUNDARY: >>>
+Boundary crossed: Template safety boundary
+Inside component: DES-TEMPLATE-CMP-002
+Outside component: DES-TEMPLATE-CMP-001
+Protected requirement: REQ-TEMPLATE-SAFE-001
+Protected function: SAFE-TEMPLATE-FUNC-001
+Trust assumption: All outside input is untrusted
+Containment objective: Invalid or absent input cannot prevent the safe response
+<<<
+INTERFERENCE_CONTROLS: >>>
+Schema and range validation: Required
+Freshness and sequence validation: Required
+Authentication and authorization: Required for privileged operations
+Command arbitration: Safety state has priority over operational requests
+Rate and resource limits: Explicitly bounded
+Timeout: Explicitly bounded
+Safe fallback: Defined independently of the outside component
+Startup and shutdown: Safe defaults apply
+Reset and recovery: Outside input cannot clear a latched safety condition
+Update compatibility: Version mismatch is detected and handled safely
+Diagnostics: Invalid, stale, and rejected input is observable
+<<<
+INTERFACE_CONTRACT: >>>
+Provider: DES-TEMPLATE-CMP-001
+Consumer: DES-TEMPLATE-CMP-002
+Direction: Request to controller and bounded status response
+Protocol and version: Replace with the approved protocol baseline
+Inputs and outputs: Replace with versioned message definitions
+Units and encoding: Explicit for every numeric field
+Validity rules: Schema, range, state, authorization, and integrity
+Freshness: Replace with maximum age
+Ordering: Define sequence and duplication behavior
+Maximum rate: Replace with bounded rate
+Maximum latency: Replace with allocated latency
+Timeout: Replace with bounded timeout
+Fallback: Replace with safe response
+Startup state: No operational authority until compatibility is established
+Reset behavior: Safety reset cannot be commanded without required conditions
+Observability: Rejections, timeouts, and compatibility faults are retained
+<<<
+CONSTRAINTS: Latency, resource, protocol, cybersecurity, deployment, environmental, and compatibility limits must be measurable.
+CONSEQUENCES: Interface changes require compatibility analysis, boundary verification, and integration regression.
+TAGS: template, interface, safety-boundary
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-SAFE-001
+  ROLE: Implements or refines
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-CMP-001
+  ROLE: Implements or refines
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-CMP-002
+  ROLE: Implements or refines
+
+[DESIGN]
+UID: DES-TEMPLATE-DEC-001
+STATUS: Draft
+TITLE: Template design decision
+TYPE: DESIGN
+DESIGN_TYPE: Decision
+DESIGN_DEPTH: Deep
+SAFETY_RELEVANCE: SafetyRelated
+STATEMENT: The system shall treat all operational requests crossing the safety boundary as untrusted and shall arbitrate them below active safety responses.
+RATIONALE: This prevents lower-assurance communication behavior from overriding the required safe response.
+SAFETY_BOUNDARY: The decision applies to DES-TEMPLATE-IF-001 and the template safety boundary.
+INTERFERENCE_CONTROLS: Validation, authorization, state gating, priority arbitration, timeout, diagnostics, and safe fallback.
+CONSTRAINTS: Arbitration behavior must be deterministic and included in response-time analysis.
+CONSEQUENCES: Requests may be rejected or delayed while a safety response is active.
+ALTERNATIVES: >>>
+Alternative A: Trust the communications component.
+Alternative B: Permit direct operational command forwarding.
+Alternative C: Validate and arbitrate requests in the safety controller.
+Selection: Alternative C.
+Selection rationale: It minimizes transferred authority and supports independent safe response.
+<<<
+CHANGE_IMPACT: >>>
+Affected requirements: REQ-TEMPLATE-SAFE-001
+Affected components: DES-TEMPLATE-CMP-001 and DES-TEMPLATE-CMP-002
+Affected interfaces: DES-TEMPLATE-IF-001
+Affected safety function: SAFE-TEMPLATE-FUNC-001
+Required regression: Interface, arbitration, timing, robustness, and fault injection
+Required approvals: Safety architecture and component authorities
+<<<
+TAGS: template, design-decision, safety-boundary
+RELATIONS:
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-ARCH-001
+  ROLE: Implements or refines
+- TYPE: Parent
+  VALUE: DES-TEMPLATE-IF-001
+  ROLE: Implements or refines
+
+[TEXT]
+STATEMENT: >>>
+# Design review checklist
+
+Before activating a design record, confirm that:
+
+- its UID is unique and immutable
+- its responsibility or decision is clear
+- requirement and safety relations resolve
+- safety relevance and design depth are justified
+- system, component, trust, deployment, and safety boundaries are explicit
+- interfaces identify providers, consumers, data, commands, timing, and failure
+  behavior
+- safety-boundary interfaces define validation, timeout, fallback, reset,
+  update, resource, and diagnostic behavior
+- shared resources and common-cause paths are addressed
+- constraints are distinguished from consequences
+- implementation tasks have not been embedded in normative design statements.
+<<<

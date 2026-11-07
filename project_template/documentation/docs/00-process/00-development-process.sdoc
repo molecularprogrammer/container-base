@@ -1,0 +1,526 @@
+[DOCUMENT]
+TITLE: Development Process
+OPTIONS:
+  MARKUP: Markdown
+
+[TEXT]
+STATEMENT: >>>
+# Purpose
+
+This document guides project managers in adapting and operating this
+template's specification-driven lifecycle for mixed-criticality projects. It
+coordinates lightweight, safety, and security work but does not claim compliance
+with any regulation or standard.
+
+Before execution, define the product scope, obligations, methods, roles, evidence,
+tailoring, and approval authorities.
+
+# Management principles
+
+Keep lifecycle records traceable; apply rigor to the smallest meaningful
+technical scope; assess safety and security separately; treat `template` records
+as examples; and make decisions against identified scopes and immutable baselines.
+Preserve failed results and prior decisions. Reassess affected work when scope,
+configuration, assumptions, risks, obligations, or dependencies change. Task or
+dashboard status is not verification or approval.
+
+StrictDoc validation checks structure and referential integrity, not technical
+correctness, compliance, risk acceptance, or release readiness.
+
+# Project setup
+
+Before approving project execution, complete the following actions.
+
+## 1. Define project scope
+
+Record:
+
+- product, product-family, and component boundaries
+- intended use and reasonably foreseeable misuse
+- product variants and supported configurations
+- lifecycle phases and operating modes
+- users, operators, maintainers, administrators, and affected persons
+- external systems, suppliers, services, and shared resources
+- system, physical, deployment, safety, trust, and organizational boundaries
+- authoritative repositories
+- configuration baselines
+- evidence-retention locations.
+
+Assign an owner to each product, component, interface, shared service, and
+assurance area.
+
+## 2. Confirm obligations
+
+Identify candidate legal, regulatory, contractual, certification, safety,
+security, privacy, quality, and market-access obligations.
+
+For each applicable obligation, record:
+
+- exact title, designation, edition, amendment, and transition date
+- jurisdiction and product classification
+- applicable and non-applicable clauses
+- interpretation and rationale
+- required activities, evidence, independence, and assessment
+- accountable decision authority
+- affected requirements, controls, tests, claims, and milestones.
+
+Qualified personnel must confirm applicability; a template reference is not a
+decision.
+
+## 3. Approve project methods
+
+Approve documented methods for:
+
+- requirements and design review
+- safety-risk evaluation
+- security-risk evaluation
+- verification and validation
+- anomaly and deviation disposition
+- vulnerability and incident handling
+- configuration and change control
+- supplier assurance
+- competence and independence
+- residual-risk acceptance
+- evidence retention.
+
+Define each method's scales, criteria, inputs, decision authority, escalation,
+and reassessment triggers.
+
+## 4. Establish roles and authority
+
+Assign responsibility for:
+
+- project management
+- product and system engineering
+- requirements
+- architecture and interfaces
+- implementation
+- verification and validation
+- configuration management
+- safety
+- security
+- quality and compliance
+- supplier management
+- milestone approval
+- residual-risk acceptance
+- release authorization.
+
+Record required competence and independence; status alone is not approval.
+
+## 5. Approve tailoring
+
+Document each omitted, reduced, replaced, or added activity and identify:
+
+- affected scope and baseline
+- applicable process or obligation
+- proposed change
+- rationale
+- affected risks and claims
+- compensating controls
+- required evidence and regression
+- reviewer and approval authority
+- expiry or invalidation conditions.
+
+Do not tailor against binding obligations. Schedule pressure or convenience is
+not sufficient justification.
+
+# Classification
+
+Classify each meaningful technical scope for safety relevance. Assess security
+significance independently.
+
+## Safety classification
+
+Use `NotSafetyRelated` only when failure or change cannot reasonably create or
+increase a hazard, interfere with a safety function, corrupt safety data, or
+invalidate safety evidence.
+
+Use `SafetyRelated` when the scope supports, constrains, configures, monitors,
+communicates with, or can interfere with a safety function.
+
+Use `SafetyCritical` when the scope implements or verifies a safety
+requirement, risk control, safety function, integrity target, residual-risk
+decision, or safety release claim.
+
+When classification is uncertain, retain the higher classification until a
+competent review approves otherwise.
+
+## Security significance
+
+Treat a scope as security-relevant when it handles protected assets, crosses or
+enforces a trust boundary, accepts untrusted input, controls privileges,
+provides update or recovery functions, affects operational availability, or
+can affect safety through a security failure.
+
+`NotSafetyRelated` does not mean security is unnecessary.
+
+## Classification workflow
+
+Perform classification in this order:
+
+1. Define context, boundaries, intended use, and foreseeable misuse.
+2. Identify hazards, assets, threats, and applicable obligations.
+3. Select risk and security controls.
+4. Derive requirements.
+5. Allocate requirements and controls to components and interfaces.
+6. Classify each allocated scope.
+7. Classify implementation and verification work according to what it
+   supports.
+8. Classify milestone rigor according to the decision being made.
+
+Review classifications when allocations, interfaces, dependencies, exposure,
+configuration, or risk assumptions change.
+
+# Planning the lifecycle
+
+Maintain an integrated plan connecting specification, implementation, evidence,
+assurance, and decisions. The lifecycle is:
+
+```mermaid
+flowchart LR
+    CONTEXT[Context and obligations] --> RISK[Needs and risks]
+    RISK --> REQ[Requirements]
+    REQ --> DES[Design and allocation]
+    DES --> WORK[Implementation]
+    REQ --> TEST[Test planning]
+    DES --> TEST
+    WORK --> EXEC[Verification and validation]
+    TEST --> EXEC
+    EXEC --> CLAIM[Assurance conclusions]
+    CLAIM --> GATE[Milestone decision]
+```
+
+For each activity, record:
+
+- scope and owner
+- required inputs
+- expected outputs
+- applicable baseline
+- dependencies
+- reviewers and independence
+- entry and exit criteria
+- retained evidence
+- target milestone.
+
+Do not silently redefine upstream requirements, design, assumptions, or controls.
+Use change control and repeat affected reviews when they are incorrect.
+
+# Requirements and design readiness
+
+Before implementation, confirm that requirements:
+
+- have stable UIDs
+- state objective behavior or constraints
+- identify operating modes and preconditions
+- define measurable acceptance criteria
+- address boundary and error behavior
+- identify source and rationale
+- carry appropriate safety classification
+- trace to relevant hazards, threats, controls, or obligations.
+
+Confirm that design:
+
+- allocates requirements and controls
+- identifies component and interface ownership
+- defines system, safety, trust, deployment, and physical boundaries
+- specifies permitted and prohibited interactions
+- addresses startup, shutdown, degraded operation, reset, recovery, and update
+- records safety and security assumptions
+- identifies required verification.
+
+For safety- or trust-boundary interfaces, address input validity, timing,
+freshness, sequencing, authorization, resource limits, failure, diagnostics,
+updates, and recovery.
+
+# Implementation, verification, and validation
+
+Plan implementation and evidence separately. Tasks record work, test cases
+define repeatable checks, and execution records capture results; none alone
+proves requirement satisfaction.
+
+Verification checks implementation against specifications. Validation checks
+whether the integrated product is suitable for intended use and foreseeable
+misuse under representative conditions. Security validation also considers
+threat actors, attack paths, exposure, and operational assumptions.
+
+Every execution record must identify:
+
+- traced requirement, design, interface, control, or claim
+- immutable tested baseline
+- procedure and acceptance-criteria revision
+- environment, tools, equipment, credentials, and test data as applicable
+- expected and actual results
+- anomalies, deviations, vulnerabilities, and dispositions
+- performer, reviewer, and required independence
+- durable evidence reference.
+
+Preserve failed or blocked results; record reruns as new executions. When a
+baseline changes, assess impact and approve regression scope.
+
+# Lifecycle paths
+
+## Lightweight work
+
+For `NotSafetyRelated` work:
+
+```text
+Requirement
+  -> Design
+  -> Implementation
+  -> Verification
+  -> Milestone
+```
+
+Minimum evidence is:
+
+- reviewed requirements
+- reviewed design and interfaces
+- identified implementation baseline
+- planned and executed tests
+- known limitations
+- milestone decision.
+
+Applicable security and compliance work remains required.
+
+## Safety-critical work
+
+For safety-critical components and system-level safety claims:
+
+```text
+Hazard
+  -> Risk control
+  -> Safety requirement
+  -> Safety function and allocation
+  -> Controlled implementation
+  -> Component verification
+  -> Integration verification
+  -> Safety validation
+  -> Residual-risk decision
+  -> Safety claim
+  -> Release baseline
+```
+
+Plan competence, independence, fault response, representative validation,
+residual-risk acceptance, production monitoring, and change impact according
+to the applicable obligations and approved methods.
+
+## Security-relevant work
+
+For protected assets, trust boundaries, attack surfaces, or security
+obligations:
+
+```text
+Security context
+  -> Asset
+  -> Threat
+  -> Security control
+  -> Security requirement and allocation
+  -> Controlled implementation
+  -> Security verification
+  -> Residual-risk decision
+  -> Security claim
+  -> Operational readiness
+  -> Vulnerability and incident monitoring
+```
+
+Select abuse-case, robustness, fuzzing, penetration, update, rollback,
+recovery, and incident-response tests based on threats and controls.
+
+A nominal functional test does not establish resistance to hostile input.
+
+# Safety and security coordination
+
+Keep safety and security analyses distinct. Jointly review threats,
+vulnerabilities, incidents, or controls that can:
+
+- create or worsen a hazardous situation
+- disable or delay a risk control
+- interfere with a safety function or safe-state transition
+- modify safety-related software, data, parameters, or configuration
+- exhaust a resource needed for safety
+- affect startup, shutdown, reset, recovery, or update
+- invalidate safety evidence or a release decision.
+
+Record affected items, design changes, additional verification, risk authorities,
+and milestone impact.
+
+Security controls must not prevent required safe behavior. Safety claims must
+not rely on undocumented security assumptions.
+
+# Lower-assurance and supplier components
+
+Before integrating a lower-assurance or external component, record:
+
+- component owner and source
+- approved version or immutable baseline
+- applicable requirements and assumptions
+- interface and configuration constraints
+- known anomalies and vulnerabilities
+- supplier evidence
+- required compensating controls
+- integration and regression tests
+- conditions that invalidate acceptance.
+
+Possible controls include defensive interfaces, validation, safe defaults,
+timeouts, isolation, resource limits, monitoring, watchdogs, restricted update
+authority, fault injection, and independent safety mechanisms.
+
+A component's own completion status does not establish product-level
+completion.
+
+# Product families and shared components
+
+Coordinate products in one project when they share substantial requirements,
+architecture, components, or evidence.
+
+Distinguish:
+
+- family-level records shared by multiple products
+- product-specific records and configurations
+- shared-component records
+- product integration and release records.
+
+Use allocation and applicability relations; do not copy shared requirements to
+complete a product view.
+
+For every product release, identify:
+
+- applicable product requirements
+- inherited, constrained, specialized, and non-applicable shared requirements
+- exact component baselines
+- product-specific implementation
+- integration verification
+- product validation
+- unresolved component issues
+- product milestone and release baseline.
+
+Each product needs its own release decision, even if a family milestone approves
+common work.
+
+For a component maintained in another repository, record its repository,
+immutable commit or release, documentation baseline, applicable records,
+integration status, and product-specific constraints.
+
+# Milestone management
+
+Use milestones to make explicit decisions about:
+
+- requirements readiness
+- design readiness
+- implementation readiness
+- component verification
+- integration readiness
+- system verification
+- validation
+- compliance assessment
+- release authorization.
+
+Each milestone must state:
+
+- decision and permitted next activity
+- scope and configuration
+- immutable baseline
+- entry criteria
+- reviewed evidence
+- open anomalies, deviations, vulnerabilities, and risks
+- conditions and limitations
+- approvers and authority
+- date and retained approval reference.
+
+Approval authorizes only the stated next activity for the stated scope and
+baseline.
+
+A remote workflow state, percentage complete, passing build, or completed task
+is not a milestone approval.
+
+# Status reporting
+
+Derive status reports from traceable records wherever practical.
+
+A product-level report should show:
+
+- applicable requirements
+- allocated components and exact baselines
+- implementation state
+- component and integration verification
+- validation state
+- missing, failed, blocked, or obsolete evidence
+- open anomalies, deviations, vulnerabilities, and changes
+- current milestone and release baseline.
+
+Do not report only aggregate percentages; link status to its source records.
+
+External task-management systems may report implementation progress, but the
+StrictDoc records and controlled evidence remain authoritative unless the
+project explicitly establishes another source.
+
+# Change control
+
+For each proposed change to an approved baseline:
+
+1. Identify affected products, components, interfaces, and configurations.
+2. Assess safety classification and security significance.
+3. Identify affected hazards, threats, controls, assumptions, and obligations.
+4. Identify affected requirements, design, evidence, claims, and milestones.
+5. Determine required review, verification, validation, and regression.
+6. Assess supplier, deployed-product, update, vulnerability, and incident
+   impact.
+7. Obtain the required approval.
+8. Establish a new baseline.
+9. Update status and downstream consumers.
+
+For shared components, identify each consuming product and pinned baseline.
+Assess applicability and impact: a component change does not automatically
+invalidate every product, and component completion does not establish product
+completion.
+
+Reassess the project when risk methods, standards editions, jurisdictions,
+product classification, intended use, operating environment, threat exposure,
+dependencies, or support commitments change, even if source code does not.
+
+# Evidence and audit readiness
+
+Retain durable evidence that lets an independent reviewer reconstruct:
+
+- why work was required
+- who performed and reviewed it
+- which baseline, environment, tools, and procedures were used
+- what was expected and observed
+- what failed or deviated
+- how findings were resolved
+- who accepted residual risk
+- which decision authorized progression
+- what changed afterward.
+
+Control access to evidence. Dashboards, transient URLs, unversioned files, and
+generated pages must not be the only retained evidence.
+
+Approvals identify the decision, scope, baseline, authority, date, conditions,
+and retained reference.
+
+# Release authorization
+
+Before release, the release authority must confirm, as applicable:
+
+- project scope, variants, boundaries, and intended use are approved
+- applicable obligations and editions are confirmed
+- tailoring remains valid
+- requirements and designs are reviewed and traceable
+- implementation matches the release baseline
+- verification and validation cover required nominal, boundary, error, fault,
+  hostile, degraded, recovery, and representative-use conditions
+- evidence identifies the tested configuration
+- required independence and external assessment are complete
+- anomalies, deviations, vulnerabilities, and incidents have authorized
+  dispositions
+- safety and security residual risks are accepted by the assigned authorities
+- compliance conclusions are configuration-specific and supported
+- production, update, monitoring, vulnerability, and incident arrangements are
+  ready
+- the release milestone records the authorized baseline, limitations,
+  conditions, approvers, and evidence.
+
+Release must be blocked when required evidence is missing, failed, obsolete,
+baseline-mismatched, or outside the approver's authority.
+
+<<<

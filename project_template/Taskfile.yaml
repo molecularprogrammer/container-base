@@ -1,0 +1,39 @@
+version: "3"
+
+includes:
+  cline:
+    taskfile: ./.cline/Taskfile.yaml
+    flatten: false
+  documentation:
+    taskfile: ./documentation/Taskfile.yaml
+    flatten: false
+
+tasks:
+
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  fetch:
+    desc: Fetch pinned project dependencies
+    dir: /workspace
+    cmds:
+      - python3 /opt/fetch_deps.py
+
+  install:
+    desc: Install project template files, overwriting any existing files.
+    dir: /workspace
+    required:
+      vars: [tag]
+    cmds:
+      - echo "Copying project template files..."
+      - cp -a /project_template/. .
+      - echo "Pinning container image versions..."
+      - sed -i 's/<tag>/{{.tag}}/g' compose.yaml
+      - sed -i 's/<tag>/{{.tag}}/g' documentation/compose.yaml
+
+  bash:
+    desc: Enter this container
+    cmds:
+      - bash

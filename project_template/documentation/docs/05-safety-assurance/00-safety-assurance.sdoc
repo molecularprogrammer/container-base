@@ -1,0 +1,642 @@
+[DOCUMENT]
+TITLE: Safety Assurance
+OPTIONS:
+  MARKUP: Markdown
+
+[GRAMMAR]
+ELEMENTS:
+- TAG: SAFETY
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: STATUS
+    TYPE: SingleChoice(Draft, InReview, Accepted, Rejected, Deprecated, Closed)
+    REQUIRED: True
+  - TITLE: TITLE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: TYPE
+    TYPE: SingleChoice(Context, Hazard, RiskControl, SafetyFunction, ComplianceObligation, AssuranceClaim)
+    REQUIRED: True
+  - TITLE: DESCRIPTION
+    TYPE: String
+    REQUIRED: True
+  - TITLE: LIFECYCLE_PHASES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: OPERATING_MODES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: PERSONS_EXPOSED
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CAUSES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONSEQUENCES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: MATERIAL_AND_SYSTEM_SCOPE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EXPOSURE_PATHWAYS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONTAINMENT_BOUNDARY
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ENVIRONMENTAL_FATE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RISK_METHOD
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INITIAL_RISK
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RISK_REDUCTION_TYPE
+    TYPE: SingleChoice(InherentlySafeDesign, Safeguard, ComplementaryProtectiveMeasure, InformationForUse)
+    REQUIRED: False
+  - TITLE: RESIDUAL_RISK
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ACCEPTANCE_RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INTEGRITY_TARGET
+    TYPE: String
+    REQUIRED: False
+  - TITLE: SAFE_STATE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RESPONSE_TIME
+    TYPE: String
+    REQUIRED: False
+  - TITLE: FAULT_REACTION
+    TYPE: String
+    REQUIRED: False
+  - TITLE: STANDARD
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EDITION
+    TYPE: String
+    REQUIRED: False
+  - TITLE: JURISDICTION
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CLAUSES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: APPLICABILITY
+    TYPE: SingleChoice(Candidate, Applicable, PartiallyApplicable, NotApplicable, Superseded)
+    REQUIRED: False
+  - TITLE: APPLICABILITY_RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EVIDENCE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: OWNER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: REVIEWER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: REVIEW_DATE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TAGS
+    TYPE: Tag
+    REQUIRED: False
+  RELATIONS:
+  - TYPE: Parent
+    ROLE: Derived from
+  - TYPE: Child
+    ROLE: Controlled or supported by
+  - TYPE: File
+    ROLE: Evidenced by
+
+[TEXT]
+STATEMENT: >>>
+# Safety assurance purpose
+
+Safety-assurance records define:
+
+- system context and intended use
+- foreseeable misuse
+- hazards and hazardous situations
+- risk controls
+- safety functions
+- component and interface allocations
+- safety boundaries and interference controls
+- compliance obligations
+- assurance claims and evidence.
+
+For projects involving molecular programming, biological samples, or other
+materials that may affect people, animals, or the environment, assess applicable
+hazards across the lifecycle. Consider material and system scope, credible
+exposure pathways, containment boundaries, environmental fate, failure and
+misuse conditions, and evidence for controls. Tailor this assessment to the
+actual project; these prompts are not a molecular-programming standard, hazard
+classification, or determination that a material or system is hazardous.
+
+## Molecular-programming and material-risk prompts
+
+Use the optional `MATERIAL_AND_SYSTEM_SCOPE`, `EXPOSURE_PATHWAYS`,
+`CONTAINMENT_BOUNDARY`, and `ENVIRONMENTAL_FATE` fields when relevant. Record
+project-specific facts and assumptions, or explain why a prompt does not apply.
+Consider the complete product and process lifecycle, including sourcing,
+preparation, operation, transport, storage, maintenance, incident response, and
+decommissioning or disposal. Depending on the actual system, assess accidental
+release, unintended interaction, persistence, and effects on people, animals,
+and the environment. Identify competent reviewers and applicable institutional,
+legal, and regulatory authorities; this template does not determine hazard
+classification, containment level, approval, or safe operating conditions.
+
+Use immutable UIDs with this form:
+
+```text
+SAFE-[AREA]-[TYPE]-[NNN]
+```
+
+Supported type segments are:
+
+- `CTX` for context and boundary records
+- `HAZ` for hazards and hazardous situations
+- `CTRL` for risk controls
+- `FUNC` for safety functions
+- `COMP` for compliance obligations
+- `CLAIM` for assurance claims.
+
+Never encode mutable risk ratings, standards editions, classifications, or
+approval states in a UID.
+
+Before assigning risk ratings, approve a project risk method defining severity,
+exposure, occurrence, avoidance or controllability where used, matrix or index
+construction, acceptance criteria, uncertainty treatment, escalation, and
+residual-risk authority.
+
+Apply the risk-reduction hierarchy:
+
+1. inherently safe design;
+2. safeguards and complementary protective measures;
+3. information for use.
+
+Warnings and instructions must not replace a reasonably practicable engineering
+control.
+<<<
+
+[SAFETY]
+UID: SAFE-TEMPLATE-CTX-001
+STATUS: Draft
+TITLE: Template system and safety-boundary context
+TYPE: Context
+DESCRIPTION: Define the product boundary, intended use, foreseeable misuse, operating domain, components, safety boundary, external actors, shared resources, and configuration items included in the assurance scope.
+LIFECYCLE_PHASES: Transport, storage, installation, commissioning, operation, charging, maintenance, recovery, update, decommissioning, and disposal
+OPERATING_MODES: Manual, remote, autonomous, degraded, service, charging, recovery, and update
+PERSONS_EXPOSED: Operators, bystanders, children, maintainers, animals, property, and the environment
+CAUSES: >>>
+- incomplete or incorrect intended-use assumptions
+- foreseeable misuse not represented in requirements or validation
+- boundary, component, or ownership ambiguity
+- unanalysed shared resources or external dependencies
+- configuration changes outside the assurance baseline.
+<<<
+CONSEQUENCES: Invalid system assumptions can invalidate hazard analysis, risk controls, verification, validation, compliance conclusions, and release authorization.
+MATERIAL_AND_SYSTEM_SCOPE: >>>
+Identify relevant biological samples, programmed molecules, materials,
+instruments, process inputs, outputs, and configuration boundaries. State
+"not applicable" with rationale when appropriate.
+<<<
+EXPOSURE_PATHWAYS: >>>
+Record credible exposure pathways and explain exclusions where relevant to the
+assessed project scope.
+<<<
+CONTAINMENT_BOUNDARY: >>>
+Identify physical, procedural, and system boundaries, responsible roles,
+monitoring, and assumptions. Determine adequacy through project-specific
+assessment.
+<<<
+ENVIRONMENTAL_FATE: >>>
+Assess plausible persistence, transformation, transport, and exposure to people,
+animals, or the environment across use, incident response, and disposal, where
+relevant.
+<<<
+ACCEPTANCE_RATIONALE: >>>
+System boundary:
+Product variants:
+Intended use:
+Reasonably foreseeable misuse:
+Operating domain:
+Components inside the product boundary:
+External actors and systems:
+Safety-boundary components:
+Components outside the safety boundary:
+Protected safety requirements and functions:
+Permitted and prohibited interactions:
+Shared power, computing, storage, network, timing, and configuration resources:
+Externally provided risk controls:
+Containment and interference controls:
+Monitoring and diagnostics:
+Configuration items in scope:
+Conditions invalidating this context:
+Approval authority:
+<<<
+OWNER: Template system safety owner
+REVIEWER: Replace with competent context reviewer
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, context, safety-boundary
+
+[SAFETY]
+UID: SAFE-TEMPLATE-HAZ-002
+STATUS: Draft
+TITLE: Template unintended material exposure or release
+TYPE: Hazard
+DESCRIPTION: Depending on the material and system, loss of containment, unintended interaction, or an unplanned release may expose people, animals, or the environment to harm during any lifecycle phase.
+LIFECYCLE_PHASES: Sourcing, preparation, operation, transport, storage, maintenance, incident response, decommissioning, and disposal; tailor to project scope
+PERSONS_EXPOSED: Identify potentially exposed workers, users, responders, bystanders, and affected communities; assess animals and environmental receptors where relevant
+CAUSES: >>>
+- containment or packaging failure
+- process, equipment, or utility fault
+- handling, transport, storage, or disposal error
+- unintended interaction or behavior not covered by validated assumptions
+- emergency response or monitoring failure
+- deliberate misuse or unauthorized access, where credible.
+<<<
+CONSEQUENCES: Assess plausible exposure, injury or illness, environmental effects, persistence, and uncertainty for the actual material and use; do not infer severity without evidence.
+MATERIAL_AND_SYSTEM_SCOPE: >>>
+Identify the material and system configuration, relevant properties, process
+boundaries, and evidence sources. Do not include unnecessary sensitive
+operational detail.
+<<<
+EXPOSURE_PATHWAYS: >>>
+Assess credible contact, inhalation, ingestion, release, transfer, or
+environmental pathways as applicable. Document exclusions and rationale.
+<<<
+CONTAINMENT_BOUNDARY: >>>
+Define the assessed physical, procedural, and system boundaries, failure
+assumptions, monitoring, and responsible roles.
+<<<
+ENVIRONMENTAL_FATE: >>>
+Assess persistence, transformation, transport, and disposal implications when
+relevant. Document evidence, uncertainty, and applicable oversight.
+<<<
+RISK_METHOD: Replace with the approved project-specific method and revision
+INITIAL_RISK: Not yet evaluated
+RESIDUAL_RISK: Not yet evaluated
+ACCEPTANCE_RATIONALE: Identify competent assessment, required risk controls, evidence, and authorized residual-risk decision before the record is accepted.
+OWNER: Assign a competent project hazard owner
+REVIEWER: Assign competent independent or otherwise authorized safety and biosafety reviewers as applicable
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, hazard, molecular-programming, biosafety
+RELATIONS:
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CTX-001
+  ROLE: Derived from
+
+[SAFETY]
+UID: SAFE-TEMPLATE-HAZ-001
+STATUS: Draft
+TITLE: Template hazardous autonomous motion near a person
+TYPE: Hazard
+DESCRIPTION: A person is exposed to traction or hazardous tool motion when the product enters or continues through an occupied protective area during autonomous, remote, degraded, recovery, or maintenance operation.
+LIFECYCLE_PHASES: Operation, recovery, and maintenance
+OPERATING_MODES: Autonomous, remote, degraded, recovery, and service
+PERSONS_EXPOSED: Operator, bystander, child, and maintainer
+CAUSES: >>>
+- person-detection failure or degraded sensing
+- localization, mapping, boundary, or route error
+- braking, steering, traction, or tool-actuator fault
+- communication loss or delayed command
+- unexpected restart or automatic recovery
+- excessive speed, slope, load, stopping distance, or surface slip
+- foreseeable entry by a child, bystander, or maintainer
+- contamination, weather, vegetation, lighting, or obstruction
+- cybersecurity compromise affecting safety behavior
+- lower-assurance component interference or shared-resource exhaustion.
+<<<
+CONSEQUENCES: >>>
+- impact, crushing, cutting, entanglement, or run-over injury
+- secondary collision with property, traffic, a drop-off, or another person.
+<<<
+RISK_METHOD: Replace with the approved project risk method and revision
+INITIAL_RISK: Replace with severity, exposure, occurrence, avoidance, uncertainty, and resulting initial risk
+RESIDUAL_RISK: Not yet evaluated
+ACCEPTANCE_RATIONALE: Further risk reduction is required through justified speed and force limits, detection and separation, protective stopping, restart prevention, diagnostics, operating-domain restrictions, and validated information for use.
+OWNER: Template hazard owner
+REVIEWER: Replace with competent hazard reviewer
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, hazard, autonomy, motion
+RELATIONS:
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CTX-001
+  ROLE: Derived from
+
+[SAFETY]
+UID: SAFE-TEMPLATE-CTRL-001
+STATUS: Draft
+TITLE: Template protective-stop risk control
+TYPE: RiskControl
+DESCRIPTION: Detect occupation of the protective field or loss of reliable occupancy determination and cause hazardous motion to reach the validated safe state before the applicable separation distance is violated.
+LIFECYCLE_PHASES: Operation, recovery, maintenance, commissioning, and service
+OPERATING_MODES: Autonomous, remote, degraded, recovery, and service
+CAUSES: >>>
+- detection coverage or diagnostic assumptions are violated
+- timing allocations are exceeded
+- controller, communication, actuator, brake, or energy-control faults occur
+- a common-cause failure defeats multiple control elements
+- reset or restart logic permits hazardous automatic recovery
+- configuration, calibration, or update integrity is lost.
+<<<
+CONSEQUENCES: If unavailable or ineffective, a person may be exposed to hazardous traction or tool motion.
+RISK_REDUCTION_TYPE: Safeguard
+RESIDUAL_RISK: Replace after implementation and validation using the approved risk method
+ACCEPTANCE_RATIONALE: The control is selected because detection and protective stopping reduce exposure to residual hazardous motion after inherently safe speed, force, and operating-domain limits have been applied.
+OWNER: Template risk-control owner
+REVIEWER: Replace with competent control reviewer
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, risk-control, protective-stop
+RELATIONS:
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-HAZ-001
+  ROLE: Derived from
+
+[SAFETY]
+UID: SAFE-TEMPLATE-FUNC-001
+STATUS: Draft
+TITLE: Template protective-stop safety function
+TYPE: SafetyFunction
+DESCRIPTION: On validated protective-field occupancy or a specified fault that prevents reliable occupancy determination, command traction and hazardous tool motion to the validated safe state and inhibit automatic restart.
+LIFECYCLE_PHASES: Operation, recovery, commissioning, maintenance, and service
+OPERATING_MODES: Autonomous, remote, degraded, recovery, and service
+CAUSES: >>>
+- entry into the protective field
+- loss or degradation of required sensing
+- invalid localization or operating-domain confidence
+- safety-communication timeout
+- logic, actuator, brake, or energy-control diagnostic fault
+- violation of speed, slope, payload, stopping-distance, or environmental assumptions.
+<<<
+CONSEQUENCES: Failure can expose a person to impact, crushing, cutting, entanglement, or run-over hazards.
+ACCEPTANCE_RATIONALE: >>>
+Demand definition:
+Input subsystem:
+Logic subsystem:
+Communication subsystem:
+Output and energy-control subsystem:
+Detection latency:
+Logic latency:
+Communication latency:
+Actuation latency:
+Stopping time and distance:
+Surface, slope, load, and environmental margin:
+Required architecture or category:
+Performance or integrity target:
+Diagnostic coverage assumptions:
+Common-cause measures:
+Systematic-failure measures:
+Proof or periodic test:
+Reset and restart behavior:
+Validation method:
+Calculation and analysis references:
+<<<
+INTEGRITY_TARGET: Replace with the target derived and justified by the approved method
+SAFE_STATE: Traction and hazardous tool motion in the validated safe state with automatic restart inhibited
+RESPONSE_TIME: Replace with the total detection-to-safe-state time and subsystem allocations
+FAULT_REACTION: Detect specified faults, command the safe state, indicate and retain the fault as required, inhibit automatic restart, and require defined reset conditions and deliberate action.
+OWNER: Template safety-function owner
+REVIEWER: Replace with competent independent reviewer
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, safety-function, autonomy, protective-stop
+RELATIONS:
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CTRL-001
+  ROLE: Derived from
+
+[SAFETY]
+UID: SAFE-TEMPLATE-COMP-001
+STATUS: Draft
+TITLE: Template machinery risk-assessment compliance obligation
+TYPE: ComplianceObligation
+DESCRIPTION: Determine whether and how the applicable machinery risk-assessment and risk-reduction framework applies to each released product variant, market, intended use, and lifecycle phase.
+ACCEPTANCE_RATIONALE: The approved evidence demonstrates the required iterative risk-assessment and risk-reduction process for the released configuration.
+STANDARD: ISO 12100, with exact adopted title and designation to be confirmed
+EDITION: Replace with confirmed edition, amendments, corrigenda, and transition date
+JURISDICTION: Replace with target markets, contractual schemes, and national adoptions
+CLAUSES: Replace with clause-level applicability results
+APPLICABILITY: Candidate
+APPLICABILITY_RATIONALE: >>>
+Product classification:
+Market and jurisdiction:
+Scope inclusion:
+Scope exclusions:
+Normative references:
+Edition selection and transition date:
+Conformity-assessment route:
+Required external body or laboratory:
+Applicable clauses:
+Non-applicable clauses and rationale:
+National or regional deviations:
+Required technical-file evidence:
+Labeling and user-information obligations:
+Production and post-market obligations:
+Decision authority:
+<<<
+EVIDENCE: Replace with compliance matrix, risk assessment, reports, certificates, or technical-file references
+OWNER: Template compliance owner
+REVIEWER: Replace with qualified machinery-safety reviewer
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, compliance, machinery, risk
+RELATIONS:
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CTX-001
+  ROLE: Derived from
+
+[SAFETY]
+UID: SAFE-TEMPLATE-COMP-002
+STATUS: Draft
+TITLE: Template safety-related control-system compliance obligation
+TYPE: ComplianceObligation
+DESCRIPTION: Determine the applicable performance, architecture, calculation, systematic-measure, and validation obligations for safety-related control functions.
+ACCEPTANCE_RATIONALE: Each applicable safety function has a justified target, validated architecture, documented assumptions, calculations, systematic measures, fault response, and configuration-specific evidence.
+STANDARD: ISO 13849-1 and related validation standards, with exact applicability and designations to be confirmed
+EDITION: Replace with confirmed editions, amendments, corrigenda, and transition dates
+JURISDICTION: Replace with target markets or contractual use
+CLAUSES: Replace with clause-level applicability results
+APPLICABILITY: Candidate
+APPLICABILITY_RATIONALE: >>>
+Product and control-system scope:
+Required performance-level determination method:
+Applicable related parts and validation standards:
+Hardware and software measures:
+Fault exclusions:
+Diagnostic and common-cause requirements:
+Applicable clauses:
+Exclusions and rationale:
+Calculation and validation tools:
+Decision authority:
+<<<
+EVIDENCE: Replace with safety-function analysis, calculations, architecture, verification, and validation references
+OWNER: Template functional-safety owner
+REVIEWER: Replace with qualified functional-safety reviewer
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, compliance, functional-safety, controls
+RELATIONS:
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Derived from
+
+[SAFETY]
+UID: SAFE-TEMPLATE-COMP-003
+STATUS: Draft
+TITLE: Template product-specific and market-access compliance assessment
+TYPE: ComplianceObligation
+DESCRIPTION: Identify all applicable product-specific, autonomy, outdoor power equipment, battery, radio, EMC, cybersecurity, transport, and market-access obligations for every released configuration.
+ACCEPTANCE_RATIONALE: Every marketed configuration is matched to confirmed obligations, clause-level evidence, approved hardware and software, labeling, declarations, and user information.
+STANDARD: Candidate references include ANSI/A3 R15.08-1, ISO 18497, ANSI/OPEI 60335-2-107, UL 2580, IEC 62133-2, FCC Part 15, and the EU Radio Equipment Directive
+EDITION: Confirm each applicable standard or regulatory baseline independently
+JURISDICTION: Replace with target countries, regions, markets, customers, transport routes, and certification schemes
+CLAUSES: Determine separately for each applicable obligation
+APPLICABILITY: Candidate
+APPLICABILITY_RATIONALE: >>>
+Product classification:
+Autonomy and operating-domain classification:
+Machine and attachment functions:
+Battery, charging, and transport classification:
+Radio technologies, modules, antennas, and frequencies:
+Cybersecurity obligations affecting safety or market access:
+Applicable alternative or additional standards:
+Scope exclusions:
+National deviations:
+Certification and conformity routes:
+Required laboratories or external bodies:
+Decision authority:
+<<<
+EVIDENCE: Replace with scope analyses, compliance matrices, reports, certificates, declarations, labeling, supplier evidence, and technical-file references
+OWNER: Template product compliance owner
+REVIEWER: Replace with qualified legal, compliance, certification, radio, EMC, battery, and product-safety reviewers as applicable
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, compliance, product-safety, battery, radio, emc
+RELATIONS:
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CTX-001
+  ROLE: Derived from
+
+[SAFETY]
+UID: SAFE-TEMPLATE-CLAIM-001
+STATUS: Draft
+TITLE: Template top-level release safety claim
+TYPE: AssuranceClaim
+DESCRIPTION: The identified product and release baseline is acceptably safe for its approved intended use and operating domain, subject to documented limitations, residual risks, and required external measures.
+LIFECYCLE_PHASES: All lifecycle phases included in the approved release scope
+OPERATING_MODES: All operating modes included in the approved release scope
+RESIDUAL_RISK: Replace with a summary and references to approved residual-risk decisions
+ACCEPTANCE_RATIONALE: >>>
+Release baseline:
+Product variants:
+Intended use:
+Reasonably foreseeable misuse:
+Operating domain and environmental limits:
+Hazards covered:
+Risk controls implemented:
+Safety functions validated:
+Safety boundaries and lower-assurance integrations:
+Compliance obligations reviewed:
+Unresolved anomalies and dispositions:
+Approved deviations and waivers:
+Residual risks:
+Required warnings, training, installation, and maintenance:
+Independent assessment:
+Configuration audit:
+Production controls:
+Field monitoring and incident response:
+Approval authority:
+Approval decision and date:
+<<<
+EVIDENCE: Replace with the controlled safety case, assurance report, configuration index, verification, validation, compliance, and release records
+OWNER: Template safety manager
+REVIEWER: Replace with independent reviewer or assessor
+REVIEW_DATE: Replace with an ISO 8601 date
+TAGS: template, assurance-claim, release
+RELATIONS:
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-HAZ-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CTRL-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-COMP-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-COMP-002
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-COMP-003
+  ROLE: Derived from
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-VER-002
+  ROLE: Controlled or supported by
+- TYPE: Child
+  VALUE: IMP-TEMPLATE-VER-003
+  ROLE: Controlled or supported by
+- TYPE: Child
+  VALUE: MILESTONE-TEMPLATE-SYSTEM-001
+  ROLE: Controlled or supported by
+
+[TEXT]
+STATEMENT: >>>
+# Product safety scope
+
+Hazard analysis should consider the complete lifecycle and reasonably
+foreseeable conditions, including:
+
+- transport, storage, installation, commissioning, charging, and disposal
+- manual, remote, autonomous, degraded, recovery, service, and update modes
+- traction, steering, braking, cutting, tools, and attachments
+- operators, children, bystanders, maintainers, animals, property, and the
+  environment
+- slopes, drop-offs, roads, water, weather, dust, debris, vegetation, poor
+  visibility, localization degradation, and communication loss
+- obstruction, contamination, unauthorized access, and defeated safeguards
+- battery electrical, thermal, mechanical, fire, charging, and transport risks
+- electromagnetic compatibility and radio behavior
+- cybersecurity threats that can cause or disable safety behavior
+- failures and changes in lower-assurance components.
+
+# Integration assurance
+
+When safety-critical and non-safety-related components are integrated, confirm
+that:
+
+- interfaces are versioned and approved
+- lower-assurance input is treated as untrusted
+- invalid, missing, stale, duplicated, reordered, or corrupted data is handled
+- timeout and fallback behavior is bounded
+- lower-assurance components cannot block required safety responses
+- shared-resource interference is controlled
+- configuration and update authority is constrained
+- startup, shutdown, reset, recovery, and degraded modes preserve safety
+- component and system baselines are compatible
+- fault-injection evidence supports every relied-upon assumption.
+
+# Assurance review
+
+Before release, confirm that:
+
+- system and safety boundaries are approved
+- every component has a justified classification
+- hazards have evaluated initial and residual risk
+- controls follow the risk-reduction hierarchy
+- requirements and functions have bidirectional traceability
+- implementation and evidence match the release baseline
+- assumptions are validated or constrained
+- required independent verification and validation are complete
+- anomalies, deviations, and residual risks have authorized dispositions
+- compliance records identify exact editions, clauses, and market routes
+- the assurance claim is limited to the identified release configuration.
+<<<

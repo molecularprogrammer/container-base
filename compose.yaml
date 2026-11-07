@@ -1,0 +1,44 @@
+services:
+  ai-proxy:
+    profiles: [cline-proxy]
+    container_name: ai-proxy
+    networks: [agent-mesh]
+    image: ${PROXY_IMAGE:-ghcr.io/molecularprogrammer/ai-proxy:latest}
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    env_file:
+      - path: .cline/.env
+        required: false
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:4000/health', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 2s
+    restart: unless-stopped
+
+  container-base:
+    image: ${TOOLCHAIN_IMAGE:-ghcr.io/molecularprogrammer/container-base:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: "${HOST_UID}:${HOST_GID}"
+    group_add:
+      - "${HOST_DOCKER_GID:-999}"
+    volumes:
+      - .:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${SSH_AUTH_SOCK}:/ssh-agent
+    environment:
+      - HOST_UID=${HOST_UID}
+      - HOST_GID=${HOST_GID}
+      - HOST_PWD=${HOST_PWD}
+      - SSH_AUTH_SOCK=/ssh-agent
+      - GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=accept-new
+      - CLINE_USE_PROXY=${CLINE_USE_PROXY:-0}
+
+networks:
+  agent-mesh:
+    name: agent-mesh
+    external: true

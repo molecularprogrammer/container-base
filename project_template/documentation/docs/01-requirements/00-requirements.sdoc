@@ -1,0 +1,276 @@
+[DOCUMENT]
+TITLE: Requirements
+OPTIONS:
+  MARKUP: Markdown
+
+[GRAMMAR]
+ELEMENTS:
+- TAG: REQUIREMENT
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: STATUS
+    TYPE: SingleChoice(Draft, Active, Deprecated, Deleted)
+    REQUIRED: True
+  - TITLE: TITLE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: TYPE
+    TYPE: SingleChoice(REQUIREMENT)
+    REQUIRED: True
+  - TITLE: CATEGORY
+    TYPE: SingleChoice(UserStory, Functional, EdgeCase, Error, Safety)
+    REQUIRED: True
+  - TITLE: PRIORITY
+    TYPE: SingleChoice(Critical, High, Medium, Low)
+    REQUIRED: True
+  - TITLE: SAFETY_CLASS
+    TYPE: SingleChoice(NotSafetyRelated, SafetyRelated, SafetyCritical)
+    REQUIRED: False
+  - TITLE: OPERATING_MODES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: SAFE_STATE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RESPONSE_TIME
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INTEGRITY_TARGET
+    TYPE: String
+    REQUIRED: False
+  - TITLE: VERIFICATION_METHOD
+    TYPE: String
+    REQUIRED: False
+  - TITLE: STATEMENT
+    TYPE: String
+    REQUIRED: True
+  - TITLE: RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ACCEPTANCE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: SYNC_ADAPTER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EXTERNAL_ENTITY_ID
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EXTERNAL_RELATED_ENTITIES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ASSIGNMENT
+    TYPE: String
+    REQUIRED: False
+  - TITLE: PLANNING_CONTAINER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TAGS
+    TYPE: Tag
+    REQUIRED: False
+  RELATIONS:
+  - TYPE: Parent
+    ROLE: Derived from
+  - TYPE: File
+    ROLE: Implemented by
+
+[TEXT]
+STATEMENT: >>>
+# Authoring requirements
+
+Requirements define externally observable behavior, constraints, edge
+conditions, error handling, and explicitly identified safety behavior.
+
+They should not prescribe architecture, source layout, libraries, algorithms,
+or tasks unless a mandated safety or compliance control requires a particular
+solution.
+
+Use immutable UIDs with this form:
+
+```text
+REQ-[MODULE]-[TYPE]-[NNN]
+```
+
+Supported type segments are:
+
+- `US` for user stories
+- `FR` for functional requirements
+- `EC` for edge-case requirements
+- `ERR` for error-handling requirements
+- `SAFE` for safety requirements.
+
+Copy the records below and assign new UIDs. Do not reuse the template UIDs for
+project requirements.
+
+A good requirement is necessary, unambiguous, feasible, singular enough to
+verify, implementation-independent where possible, traceable, and supported by
+objective acceptance criteria.
+
+Use `shall` for normative behavior. Define actors, modes, quantities, units,
+tolerances, timing, preconditions, fault conditions, and expected failure
+behavior whenever they affect acceptance.
+
+Safety requirements must trace to a risk control or safety function and define
+the applicable modes, safe state, timing, fault reaction, reset behavior, and
+objective evidence as applicable.
+<<<
+
+[REQUIREMENT]
+UID: REQ-TEMPLATE-US-001
+STATUS: Draft
+TITLE: Template user story
+TYPE: REQUIREMENT
+CATEGORY: UserStory
+PRIORITY: Medium
+SAFETY_CLASS: NotSafetyRelated
+STATEMENT: As a defined user role, I want a stated capability so that I receive a measurable benefit.
+RATIONALE: Explain why the user needs the capability and why the benefit matters.
+ACCEPTANCE: Given the relevant context, when the user performs the action, then the expected result is observable.
+TAGS: template, user-story
+
+[REQUIREMENT]
+UID: REQ-TEMPLATE-FR-001
+STATUS: Draft
+TITLE: Template functional requirement
+TYPE: REQUIREMENT
+CATEGORY: Functional
+PRIORITY: High
+SAFETY_CLASS: NotSafetyRelated
+STATEMENT: The system shall provide the defined observable behavior under the specified operating conditions.
+RATIONALE: Explain why the behavior is required.
+ACCEPTANCE: >>>
+Given:
+- the system is in the specified initial state
+- required inputs and dependencies are available.
+When:
+- the defined action or event occurs.
+Then:
+- the measurable expected result is produced
+- prohibited side effects do not occur.
+<<<
+TAGS: template, functional
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-US-001
+  ROLE: Derived from
+
+[REQUIREMENT]
+UID: REQ-TEMPLATE-EC-001
+STATUS: Draft
+TITLE: Template edge-case requirement
+TYPE: REQUIREMENT
+CATEGORY: EdgeCase
+PRIORITY: High
+SAFETY_CLASS: NotSafetyRelated
+STATEMENT: When the defined boundary condition occurs, the system shall produce the specified bounded behavior.
+RATIONALE: The boundary condition requires behavior that can be verified independently from the nominal path.
+ACCEPTANCE: Given the boundary condition, when the triggering action occurs, then the specified result is produced without an unintended state transition.
+TAGS: template, edge-case
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-FR-001
+  ROLE: Derived from
+
+[REQUIREMENT]
+UID: REQ-TEMPLATE-ERR-001
+STATUS: Draft
+TITLE: Template error-handling requirement
+TYPE: REQUIREMENT
+CATEGORY: Error
+PRIORITY: High
+SAFETY_CLASS: NotSafetyRelated
+STATEMENT: If the defined error condition occurs, the system shall enter the specified error state and provide the defined externally observable response.
+RATIONALE: The error requires deterministic handling and independent verification.
+ACCEPTANCE: >>>
+Given:
+- the defined error can be injected or reproduced.
+When:
+- the error occurs during the applicable operation.
+Then:
+- the specified response is produced
+- the resulting system state is observable
+- no prohibited side effect occurs.
+<<<
+TAGS: template, error-handling
+RELATIONS:
+- TYPE: Parent
+  VALUE: REQ-TEMPLATE-FR-001
+  ROLE: Derived from
+
+[REQUIREMENT]
+UID: REQ-TEMPLATE-SAFE-001
+STATUS: Draft
+TITLE: Template safety requirement
+TYPE: REQUIREMENT
+CATEGORY: Safety
+PRIORITY: Critical
+SAFETY_CLASS: SafetyCritical
+OPERATING_MODES: Autonomous and remote operation
+SAFE_STATE: Hazardous motion is commanded to the validated safe state and automatic restart is inhibited
+RESPONSE_TIME: Replace with the derived maximum response time, including units and tolerance
+INTEGRITY_TARGET: Replace with the target derived using the approved risk and functional-safety method
+VERIFICATION_METHOD: Test, fault injection, analysis, and representative validation
+STATEMENT: When the defined hazardous condition or safety-function demand occurs in an applicable operating mode, the system shall achieve the defined safe state within the allocated response time.
+RATIONALE: This requirement implements the template protective-stop risk control and safety function.
+ACCEPTANCE: >>>
+Given:
+- the applicable operating mode and worst-case permitted load
+- the specified environmental and surface conditions
+- relevant single faults and justified fault combinations
+- the release-candidate hardware, software, parameters, and calibration.
+When:
+- the defined safety demand is introduced.
+Then:
+- detection, logic, communication, actuation, and stopping remain within their allocations
+- the defined safe state is reached within the required response time
+- diagnostics identify the demand and detected faults
+- restart remains inhibited until the defined reset conditions are satisfied.
+Evidence:
+- retained raw results
+- approved test and analysis reports
+- configuration and calibration identification
+- independent review where required.
+<<<
+TAGS: template, safety, risk-control
+RELATIONS:
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-CTRL-001
+  ROLE: Derived from
+- TYPE: Parent
+  VALUE: SAFE-TEMPLATE-FUNC-001
+  ROLE: Derived from
+
+[TEXT]
+STATEMENT: >>>
+# External work-management mapping
+
+Synchronization fields are optional. Omit them when no configured adapter owns
+a Git-managed representation.
+
+A direct mapping consists of `SYNC_ADAPTER` and `EXTERNAL_ENTITY_ID`. Related
+entities use one deterministic role-qualified entry per line:
+
+```text
+implementation: external-entity-id
+verification: external-entity-id
+```
+
+The local StrictDoc UID remains authoritative. Do not infer mappings from
+titles or statements, and never store credentials in project documents.
+
+# Review checklist
+
+Before activating a requirement, confirm that:
+
+- all template wording has been replaced
+- the UID is unique and immutable
+- the statement has one clear normative interpretation
+- acceptance criteria produce an objective pass or fail result
+- units, timing, tolerances, modes, and limits are explicit
+- edge and error behavior are separated when independently verifiable
+- parent relations resolve to the intended records
+- safety requirements trace to risk controls or safety functions
+- synchronization mappings are explicit, deterministic, and credential-free.
+<<<

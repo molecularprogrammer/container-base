@@ -1,0 +1,12 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PROXY_HOST=0.0.0.0 \
+    PROXY_PORT=4000
+
+WORKDIR /app
+COPY main.py .
+
+EXPOSE 4000
+CMD ["python", "/app/main.py"]
