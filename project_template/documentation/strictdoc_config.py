@@ -27,7 +27,7 @@ def create_config() -> ProjectConfig:
             "@security": "grammar/security.sgra",
         },
         statistics_generator=(
-            "docs.sdoc_project_statistics.DocumentationStatisticsGenerator"
+            "sdoc_project_statistics.DocumentationStatisticsGenerator"
         ),
         # source_root_path="source_root/",
     )
