@@ -1,0 +1,113 @@
+[GRAMMAR]
+ELEMENTS:
+- TAG: SAFETY
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: STATUS
+    TYPE: SingleChoice(Draft, InReview, Accepted, Rejected, Deprecated, Closed)
+    REQUIRED: True
+  - TITLE: TITLE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: TYPE
+    TYPE: SingleChoice(Context, Hazard, RiskControl, SafetyFunction, ComplianceObligation, AssuranceClaim)
+    REQUIRED: True
+  - TITLE: DESCRIPTION
+    TYPE: String
+    REQUIRED: True
+  - TITLE: LIFECYCLE_PHASES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: OPERATING_MODES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: PERSONS_EXPOSED
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CAUSES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONSEQUENCES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: MATERIAL_AND_SYSTEM_SCOPE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EXPOSURE_PATHWAYS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONTAINMENT_BOUNDARY
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ENVIRONMENTAL_FATE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RISK_METHOD
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INITIAL_RISK
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RISK_REDUCTION_TYPE
+    TYPE: SingleChoice(InherentlySafeDesign, Safeguard, ComplementaryProtectiveMeasure, InformationForUse)
+    REQUIRED: False
+  - TITLE: RESIDUAL_RISK
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ACCEPTANCE_RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INTEGRITY_TARGET
+    TYPE: String
+    REQUIRED: False
+  - TITLE: SAFE_STATE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RESPONSE_TIME
+    TYPE: String
+    REQUIRED: False
+  - TITLE: FAULT_REACTION
+    TYPE: String
+    REQUIRED: False
+  - TITLE: STANDARD
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EDITION
+    TYPE: String
+    REQUIRED: False
+  - TITLE: JURISDICTION
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CLAUSES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: APPLICABILITY
+    TYPE: SingleChoice(Candidate, Applicable, PartiallyApplicable, NotApplicable, Superseded)
+    REQUIRED: False
+  - TITLE: APPLICABILITY_RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EVIDENCE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: OWNER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: REVIEWER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: REVIEW_DATE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TAGS
+    TYPE: Tag
+    REQUIRED: False
+  RELATIONS:
+  - TYPE: Parent
+    ROLE: Derived from
+  - TYPE: Child
+    ROLE: Controlled or supported by
+  - TYPE: File
+    ROLE: Evidenced by

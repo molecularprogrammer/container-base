@@ -1,4 +1,5 @@
 from collections import Counter
+import re
 from typing import Iterable, Optional
 from urllib.parse import quote
 
@@ -71,8 +72,18 @@ def _field_value(node: SDocNode, field_name: str) -> Optional[str]:
     if field is None:
         return None
 
-    value = _value_to_text(field).strip()
+    if isinstance(field, list):
+        value = ", ".join(_field_part_to_text(item) for item in field).strip()
+    else:
+        value = _field_part_to_text(field).strip()
     return value if value else None
+
+
+def _field_part_to_text(value: object) -> str:
+    parts = getattr(value, "parts", None)
+    if parts is not None:
+        return _value_to_text(parts)
+    return _value_to_text(value)
 
 
 def _field_equals_link(field_name: str, value: str) -> str:
@@ -210,6 +221,79 @@ def _breakdown_metrics(
 
 def _section(name: str, metrics: list[Metric]) -> MetricSection:
     return MetricSection(name=name, metrics=metrics)
+
+
+def _effort_hours(node: SDocNode, field_name: str) -> Optional[float]:
+    value = _field_value(node, field_name)
+    if value is None:
+        return None
+
+    match = re.fullmatch(
+        r"\s*(\d+(?:\.\d+)?)\s*(?:h|hours?)?\s*",
+        value,
+        re.IGNORECASE,
+    )
+    return float(match.group(1)) if match else None
+
+
+def _format_effort(value: float) -> str:
+    return str(int(value)) if value.is_integer() else str(value)
+
+
+def _milestone_effort_metrics(
+    milestones: list[SDocNode],
+    implementation: list[SDocNode],
+) -> list[Metric]:
+    metrics: list[Metric] = []
+    effort_fields = (
+        "EFFORT_MIN",
+        "EFFORT_LIKELY",
+        "EFFORT_MAX",
+    )
+
+    for milestone in milestones:
+        included_uids = {
+            relation.ref_uid
+            for relation in milestone.relations
+            if relation.role == "Includes"
+        }
+        included_tasks = [
+            task
+            for task in implementation
+            if _field_value(task, "UID") in included_uids
+            and _field_value(task, "TYPE") == "Task"
+        ]
+
+        totals: list[str] = []
+        for field_name in effort_fields:
+            estimates = [
+                _effort_hours(task, field_name)
+                for task in included_tasks
+            ]
+            if not estimates or any(estimate is None for estimate in estimates):
+                totals.append("Incomplete")
+            else:
+                totals.append(_format_effort(sum(estimates)))
+
+        milestone_uid = _field_value(milestone, "UID") or "Milestone"
+        milestone_title = _field_value(milestone, "TITLE") or "Untitled"
+        task_count = len(included_tasks)
+        value = (
+            f"{totals[0]} / {totals[1]} / {totals[2]} h "
+            "(hours; incomplete if any included task lacks that estimate)"
+        )
+        metrics.append(
+            Metric(
+                name=(
+                    f"{milestone_uid} — {milestone_title} "
+                    f"(min / likely / max; {task_count} tasks)"
+                ),
+                value=value,
+                link=_field_equals_link("UID", milestone_uid),
+            )
+        )
+
+    return metrics
 
 
 class DocumentationStatisticsGenerator:
@@ -710,6 +794,12 @@ class DocumentationStatisticsGenerator:
                 nodes=milestones,
                 field_name="SAFETY_RELEVANCE",
                 label="Safety relevance",
+            )
+        )
+        milestone_metrics.extend(
+            _milestone_effort_metrics(
+                milestones=milestones,
+                implementation=implementation,
             )
         )
         metrics.append(_section("Milestones", milestone_metrics))

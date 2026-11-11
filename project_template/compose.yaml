@@ -19,15 +19,18 @@ services:
     image: ${TOOLCHAIN_IMAGE:-ghcr.io/molecularprogrammer/container-base:<tag>}
     user: "${HOST_UID}:${HOST_GID}"
     group_add:
-      - "${HOST_DOCKER_GID:-999}"
+      - "${HOST_DOCKER_GID:?Set HOST_DOCKER_GID to the Docker socket group ID}"
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - .:/workspace
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${SSH_AUTH_SOCK}:/ssh-agent
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${SSH_AUTH_SOCK:-/dev/null}:/ssh-agent
     environment:
       - HOST_UID=${HOST_UID}
       - HOST_GID=${HOST_GID}
       - HOST_PWD=${HOST_PWD}
+      - HOST_DOCKER_GID=${HOST_DOCKER_GID:?Set HOST_DOCKER_GID to the Docker socket group ID}
       - SSH_AUTH_SOCK=/ssh-agent
       - GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=accept-new
       - CLINE_USE_PROXY=${CLINE_USE_PROXY:-0}

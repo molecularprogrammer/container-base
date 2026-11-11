@@ -1,0 +1,60 @@
+[GRAMMAR]
+ELEMENTS:
+- TAG: DESIGN
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: STATUS
+    TYPE: SingleChoice(Draft, Active, Deprecated, Deleted)
+    REQUIRED: True
+  - TITLE: TITLE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: TYPE
+    TYPE: SingleChoice(DESIGN)
+    REQUIRED: True
+  - TITLE: DESIGN_TYPE
+    TYPE: SingleChoice(Architecture, Component, Interface, Decision)
+    REQUIRED: True
+  - TITLE: DESIGN_DEPTH
+    TYPE: SingleChoice(Basic, Standard, Deep)
+    REQUIRED: True
+  - TITLE: SAFETY_RELEVANCE
+    TYPE: SingleChoice(NotSafetyRelated, SafetyRelated, SafetyCritical)
+    REQUIRED: True
+  - TITLE: STATEMENT
+    TYPE: String
+    REQUIRED: True
+  - TITLE: RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: SAFETY_BOUNDARY
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INTERFERENCE_CONTROLS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INTERFACE_CONTRACT
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONSTRAINTS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONSEQUENCES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ALTERNATIVES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CHANGE_IMPACT
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TAGS
+    TYPE: Tag
+    REQUIRED: False
+  RELATIONS:
+  - TYPE: Parent
+    ROLE: Implements or refines
+  - TYPE: File
+    ROLE: Implemented by
