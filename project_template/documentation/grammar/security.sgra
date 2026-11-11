@@ -1,0 +1,107 @@
+[GRAMMAR]
+ELEMENTS:
+- TAG: SECURITY
+  FIELDS:
+  - TITLE: UID
+    TYPE: String
+    REQUIRED: True
+  - TITLE: STATUS
+    TYPE: SingleChoice(Draft, InReview, Accepted, Rejected, Active, Mitigated, Closed, Deprecated)
+    REQUIRED: True
+  - TITLE: TITLE
+    TYPE: String
+    REQUIRED: True
+  - TITLE: TYPE
+    TYPE: SingleChoice(Context, Asset, Threat, SecurityControl, VulnerabilityManagement, IncidentResponse, ComplianceObligation, AssuranceClaim)
+    REQUIRED: True
+  - TITLE: DESCRIPTION
+    TYPE: String
+    REQUIRED: True
+  - TITLE: LIFECYCLE_PHASES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: OPERATING_MODES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ASSETS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TRUST_BOUNDARY
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ATTACK_SURFACE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: THREAT_ACTORS
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ATTACK_PATH
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONSEQUENCES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RISK_METHOD
+    TYPE: String
+    REQUIRED: False
+  - TITLE: INITIAL_RISK
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CONTROL_TYPE
+    TYPE: SingleChoice(Preventive, Detective, Responsive, Recovery)
+    REQUIRED: False
+  - TITLE: SECURITY_OBJECTIVES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: SAFETY_IMPACT
+    TYPE: String
+    REQUIRED: False
+  - TITLE: RESIDUAL_RISK
+    TYPE: String
+    REQUIRED: False
+  - TITLE: ACCEPTANCE_RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: VERIFICATION_METHOD
+    TYPE: String
+    REQUIRED: False
+  - TITLE: STANDARD
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EDITION
+    TYPE: String
+    REQUIRED: False
+  - TITLE: JURISDICTION
+    TYPE: String
+    REQUIRED: False
+  - TITLE: CLAUSES
+    TYPE: String
+    REQUIRED: False
+  - TITLE: APPLICABILITY
+    TYPE: SingleChoice(Candidate, Applicable, PartiallyApplicable, NotApplicable, Superseded)
+    REQUIRED: False
+  - TITLE: APPLICABILITY_RATIONALE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: EVIDENCE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: OWNER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: REVIEWER
+    TYPE: String
+    REQUIRED: False
+  - TITLE: REVIEW_DATE
+    TYPE: String
+    REQUIRED: False
+  - TITLE: TAGS
+    TYPE: Tag
+    REQUIRED: False
+  RELATIONS:
+  - TYPE: Parent
+    ROLE: Derived from
+  - TYPE: Child
+    ROLE: Supported by
+  - TYPE: File
+    ROLE: Evidenced by

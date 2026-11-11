@@ -16,7 +16,16 @@ def create_config() -> ProjectConfig:
         ],
         include_doc_paths=[
             "/docs/**",
+            "/grammar/**"
         ],
+        grammars={
+            "@requirements": "grammar/requirements.sgra",
+            "@design": "grammar/design.sgra",
+            "@implementation": "grammar/implementation.sgra",
+            "@milestones": "grammar/milestones.sgra",
+            "@safety": "grammar/safety.sgra",
+            "@security": "grammar/security.sgra",
+        },
         statistics_generator=(
             "docs.sdoc_project_statistics.DocumentationStatisticsGenerator"
         ),
