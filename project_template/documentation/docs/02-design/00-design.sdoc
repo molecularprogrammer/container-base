@@ -11,7 +11,9 @@ STATEMENT: >>>
 # Design purpose
 
 Design records allocate requirements to architecture, components, interfaces,
-and consequential decisions.
+and consequential decisions. Organize records recursively by component containment.
+The parent design owns interactions among its direct children and with external
+components; do not repeat parent-owned interface contracts in child designs.
 
 Use immutable UIDs with this form:
 
