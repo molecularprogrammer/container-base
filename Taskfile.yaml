@@ -73,6 +73,7 @@ tasks:
 
         export STRICTDOC_IMAGE="$image"
         export HOST_PWD="$host_project"
+        export DOCKER_MOUNT_PATH="$host_project/documentation"
         docker compose \
           --file /workspace/test_project/documentation/compose.yaml \
           --project-directory /workspace/test_project/documentation \
@@ -81,7 +82,7 @@ tasks:
         docker compose \
           --file /workspace/test_project/documentation/compose.yaml \
           --project-directory /workspace/test_project/documentation \
-          run --rm strictdoc export /workspace \
+          run --rm --entrypoint strictdoc strictdoc export /workspace \
           --config /workspace/strictdoc_config.py \
           --formats=html \
           --generate-bundle-document
