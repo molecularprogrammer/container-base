@@ -1,41 +1,44 @@
 version: '3'
 
 tasks:
+
+  _docker-run:
+    internal: true
+    dir: '{{.TASKFILE_DIR}}'
+    vars:
+      DOCKER_MOUNT_PATH: '{{.HOST_PWD}}/{{ trimPrefix "/workspace/" .TASKFILE_DIR }}'
+    cmds:
+    - DOCKER_MOUNT_PATH="{{.DOCKER_MOUNT_PATH}}" docker compose run --rm --service-ports strictdoc {{.CMD}}
+
   format:
     desc: "Rewrap .sdoc, .md, and .template files in /docs to 100 columns"
-    dir: documentation
+    dir: '{{.TASKFILE_DIR}}'
     cmds:
       - python3 rewrap.py
 
   build:
     desc: "Validate the documentation and export the static website"
-    dir: documentation
     deps:
       - :fetch
     cmds:
-      - docker compose --file compose.yaml --project-directory . run --rm strictdoc export . --config strictdoc_config.py --formats=html --generate-bundle-document
+      - task: _docker-run
+        vars:
+          CMD: >
+            strictdoc export .
+            --config strictdoc_config.py
+            --formats=html
+            --generate-bundle-document
 
   serve:
     desc: "Run StrictDoc server"
-    dir: documentation
     deps:
       - :fetch
     cmds:
-      - docker compose --file compose.yaml --project-directory . run --rm --service-ports strictdoc server --config strictdoc_config.py --host 0.0.0.0 --port 5111 --watch .
+      - task: _docker-run
+        vars: { CMD: "strictdoc --debug server --host 0.0.0.0 --port 5111 --watch ."}
 
   bash:
-    desc: "Open a shell in the StrictDoc container"
-    dir: documentation
+    desc: "Enter the StrictDoc sibling container"
     cmds:
-      - docker compose --file compose.yaml --project-directory . run --rm --entrypoint bash strictdoc
-
-  markup-to-markdown:
-    desc: "Use Docling to convert markup to markdown while preserving headings, images, links, tables, etc..."
-    cmds:
-      - echo Docling not setup in the container yet
-
-  markup-to-markdown-mcp:
-    desc: "Start Docling MCP server to enable language models to directly interact with markup documents"
-    cmds:
-      - echo Docling not setup in the container yet
-      # - docker run -p 5001:5001 quay.io/docling-project/docling-serve-cpu
+      - task: _docker-run
+        vars: { CMD: "bash"}

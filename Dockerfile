@@ -65,7 +65,7 @@ COPY fetch_deps.py /opt/fetch_deps.py
 # Copy project template
 WORKDIR /project_template
 COPY project_template .
-COPY .cline/.env.example .cline/Taskfile.yaml .cline/
+COPY .cline/.arch.md .cline/.env.example .cline/Taskfile.yaml .cline/
 COPY .cline/rules/coding-standards.md .cline/rules/documentation.md .cline/rules/
 COPY LICENSE ./LICENSE
 

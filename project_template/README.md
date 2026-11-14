@@ -1,9 +1,5 @@
 # Project Template
 
-[TOC]
-
-## Overview
-
 Project description.
 
 ---
@@ -21,9 +17,13 @@ the following convenience scripts:
 - On Ubuntu-based Linux distros, run `sudo ./install_docker.sh`
 - On MS Windows, run `installer_docker.bat`
 
+---
+
 ## Run Tasks
 
 Run `./task.sh` to see the available project tasks. Tasks run in the base development container.
+
+---
 
 ## Language Model Assistance
 
