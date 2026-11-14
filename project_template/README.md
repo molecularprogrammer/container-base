@@ -1,9 +1,5 @@
 # Project Template
 
-[TOC]
-
-## Overview
-
 Project description.
 
 ---
@@ -21,40 +17,18 @@ the following convenience scripts:
 - On Ubuntu-based Linux distros, run `sudo ./install_docker.sh`
 - On MS Windows, run `installer_docker.bat`
 
+---
+
 ## Run Tasks
 
 Run `./task.sh` to see the available project tasks. Tasks run in the base development container.
 
-### Shared Cline proxy setup
+---
 
-The Cline proxy is optional. To use the shared proxy, copy `.cline/.env.example` to
-`.cline/.env`, set a real `UPSTREAM_API_KEY`, and optionally adjust `UPSTREAM_URL`,
-`UPSTREAM_AUTH_HEADER`, and `UPSTREAM_AUTH_SCHEME`. Running `./task.sh cline:launch` starts the
-shared proxy on demand and attaches the developer container to `agent-mesh`; the real key is passed
-only to the proxy. The singleton uses one provider account and key shared by all projects; the first
-project that starts it supplies those settings. Configure Cline's OpenAI-compatible provider
-manually with base URL `http://ai-proxy:4000` and a dummy API key.
-Do not commit `.cline/.env`.
+## Language Model Assistance
 
-The shared proxy is a singleton with one upstream configuration. All projects using it must use the
-same provider account and key. The first project that starts it supplies that configuration; changing
-it requires recreating the `ai-proxy` container.
-
-Without `.cline/.env`, the Cline tasks leave your provider settings untouched and launch Cline
-normally, allowing you to use Cline's own provider setup. Non-Cline tasks do not need proxy
-credentials or a Cline environment file.
-
-Each Cline worktree gets an isolated `.cline` config/data directory. Its provider/model settings are
-stored in `.cline/data/settings/providers.json`, and its session history is stored under
-`.cline/data`. Existing worktree provider settings are preserved; otherwise they are initialized
-from the project settings. The proxy is reachable at `ai-proxy:4000` only from containers attached
-to `agent-mesh`.
-
-The proxy forwards request paths beneath `UPSTREAM_URL` (use the provider origin, such as
-`https://api.openai.com`). Optional `MODEL_MAP` JSON translates model names and `ROUTE_MAP` JSON
-maps incoming path prefixes to upstream path prefixes.
-Upstream rate-limit telemetry is available at `GET /rate-limits`; 429 `Retry-After` headers cause
-a bounded cooldown shared by requests handled by this proxy process, not across proxy replicas.
+See [the Cline architecture and usage guide](.cline/.arch.md) for why this template uses Cline,
+how to use it, and how to configure its optional local proxy.
 
 ---
 

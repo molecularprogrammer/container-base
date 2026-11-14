@@ -16,6 +16,3 @@ RUN apt-get update \
 RUN python -m pip install --no-cache-dir "strictdoc==${STRICTDOC_VERSION}"
 
 WORKDIR /workspace
-
-ENTRYPOINT ["strictdoc"]
-CMD ["--help"]
